@@ -1,0 +1,102 @@
+language: pt
+country: BR
+
+spring.messages.fallback-to-system-locale: true
+server:
+  servlet:
+    contextPath: /
+  port: 8090
+
+
+logging:
+  config: classpath:logback.xml
+
+spring:
+  application:
+    name: easyfood
+  profiles:
+    active: dev
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    enabled: true
+  datasource:
+    url: jdbc:postgresql://10.8.0.1:5435/dbeasyfood
+    username: dbaava
+    password: F7h99WMhX33s
+    
+    hikari:
+      minimum-idle: 1 #minimum number of idle connections maintained by HikariCP in a connection pool
+      maximum-pool-size: 10 #40 #maximum pool size
+      max-lifetime: 60000 # maximum lifetime in milliseconds of a connection in the pool after it is closed
+      idle-timeout: 90000 #maximum idle time for connection
+      connection-timeout: 300000 #Tempo limite de espera para aquisição de conexão em milliseconds
+      validation-timeout: 600000 #Tempo limite de espera para validação de pool em segundos
+      pool-name: easyfood
+      connection-test-query: SELECT 1
+    cachePrepStmts: false
+    prepStmtCacheSize: 250
+    prepStmtCacheSqlLimit: 2048
+    useServerPrepStmts: true
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+  
+  jpa:
+    database: postgresql
+    openInView: false
+    show_sql: true
+    hibernate:
+      ddl-auto: none
+      naming-strategy: org.hibernate.cfg.EJB3NamingStrategy
+    properties:
+      hibernate.cache.use_second_level_cache: false
+      hibernate.cache.use_query_cache: false
+      hibernate.generate_statistics: false
+      hibernate.cache.region.factory_class: org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
+      hibernate.enable_lazy_load_no_trans: true
+      hibernate.show_sql: true
+      hibernate.format_sql: true
+      hibernate.use_sql_comments: false
+      hibernate:
+        envers:
+          default_schema: audit_easyfood
+          autoRegisterListeners: true
+          audit_table_suffix: _audit
+  messages:
+    cache-seconds: 1
+    basename: locale
+  mvc:
+    problem_details.enabled: true
+
+
+#APP SPECIFIC CUSTOM PROPERTIES
+api:
+  info:
+    title: EasyFood
+    description: EasyFood app Documentation!
+    terms-of-service: http://
+    contact:
+      name: IGOR MAURO SILVA DE ALMEIDA
+      email: imsasoftwarebrasil@gmail.com
+      url: https://github.com/IgorAlmeeida/easyfood.git
+    license:
+      name: Apache 2.0
+      url: http://www.apache.org/licenses/LICENSE-2.0.html
+  logging:
+    enable: true
+    url-patterns: "/*"
+    requestIdParamName: CORRELATION_ID
+  security:
+    enabled: false
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html  # Redirect localhost:8080 to swagger-ui.html
+    use-fqn: true
+    disable-swagger-default-url: true
+
+
+app:
+  jwtSecret: 86277585541bf49d74e9aa2e514b28b1276bccb9248060ad28d83136e89c31d701937e2552610234a64733af757cddff69434b0499fce0124a2a71291a8797e7
+  jwtExpirationMs: 86400000
