@@ -2,6 +2,8 @@ package br.com.imsa.easyfood.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,13 +20,20 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 public abstract class Auditable {
 
-    @CreatedDate
     @Column(name = "dh_create_at")
     private LocalDateTime createAt;
 
-    @LastModifiedDate
     @Column(name = "dh_update_at")
     private LocalDateTime updateAt;
 
+    @PrePersist
+    public void prePersist() {
+        this.createAt = LocalDateTime.now();
+        this.updateAt = LocalDateTime.now();
+    }
 
+    @PreUpdate
+    public void preUpdate() {
+        this.updateAt = LocalDateTime.now();
+    }
 }

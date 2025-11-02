@@ -17,12 +17,16 @@ spring:
   profiles:
     active: dev
   liquibase:
-    change-log: classpath:db/changelog/db.changelog-master.yaml
+    change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
+    default-schema: public
+    liquibase-schema: public
+
   datasource:
-    url: jdbc:postgresql://10.8.0.1:5435/dbeasyfood
-    username: dbaava
-    password: F7h99WMhX33s
+    # Default datasource values; will be overridden in 'dev' profile below
+    url: jdbc:postgresql://localhost:5432/dbeasyfood
+    username: easyfood
+    password: easyfood
     
     hikari:
       minimum-idle: 1 #minimum number of idle connections maintained by HikariCP in a connection pool

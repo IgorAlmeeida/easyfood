@@ -23,7 +23,7 @@ public class JwtUtils {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
         return Jwts.builder()
-                .setSubject(userSystem.getEmail().toString())
+                .setSubject(userSystem.getUsername().toString())
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
@@ -31,7 +31,11 @@ public class JwtUtils {
     }
 
     public String getUserNameFromJwtToken(String token) {
-        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 
     public boolean validateJwtToken(String authToken) {

@@ -7,6 +7,7 @@ import br.com.imsa.easyfood.api.dto.responses.UserSystemResponse;
 import br.com.imsa.easyfood.domain.entity.UserSystem;
 import br.com.imsa.easyfood.domain.service.UserSystemService;
 import br.com.imsa.easyfood.exception.NegocioException;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

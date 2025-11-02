@@ -18,13 +18,13 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public Address createAddress(AddressRequest addressRequest) {
         Address address = modelMapper.map(addressRequest, Address.class);
-
-        addressRepository.save(address);
-        return address;
+        return addressRepository.save(address);
     }
 
     @Override
     public Address updateAddress(Address address, AddressRequest addressRequest) {
-        return addressRepository.save(modelMapper.map(address, Address.class));
+        // Map incoming request fields onto the existing entity instance
+        modelMapper.map(addressRequest, address);
+        return addressRepository.save(address);
     }
 }

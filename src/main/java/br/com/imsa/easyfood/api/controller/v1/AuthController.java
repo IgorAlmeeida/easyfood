@@ -18,7 +18,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 
 @RestController
-@RequestMapping(value = "auth/v1", produces = "application/json; charset=utf-8")
+@RequestMapping(value = "/api/auth/v1", produces = "application/json; charset=utf-8")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -52,7 +52,7 @@ public class AuthController {
                 jwtExpirationMs));
     }
 
-    @PostMapping("/api/auth/v1/change-password")
+    @PostMapping("/change-password")
     public ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserSystem userSystem = (UserSystem) authentication.getPrincipal();

@@ -14,13 +14,16 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UserSystemRequest {
 
-    @NotBlank(message = "É necessário informar o nome do usuário.")
+    @NotBlank(message = "É necessário informar o username.")
     private String username;
+
+    @NotBlank(message = "É necessário informar o nome do usuário.")
+    private String name;
 
     @NotBlank(message = "É necessário informar o email.")
     private String email;
 
-    @NotBlank(message = "É necessário informar o sexo.")
+    @NotNull(message = "É necessário informar o tipo do usuário.")
     private UserTypeEnum userType;
 
     @NotBlank(message = "É necessário informar a senha do usuário.")

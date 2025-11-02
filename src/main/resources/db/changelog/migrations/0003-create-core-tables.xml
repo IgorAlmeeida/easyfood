@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        logicalFilePath="db/changelog/0003-create-core-tables.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="0003-create-core-tables" author="system">
+        <comment>Cria tabelas do pacote entity no esquema easyfood</comment>
+        <createTable tableName="address" schemaName="easyfood">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="dh_create_at" type="TIMESTAMP"/>
+            <column name="dh_update_at" type="TIMESTAMP"/>
+        </createTable>
+
+        <createTable tableName="user_system" schemaName="easyfood">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="active" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="address_id" type="BIGINT"/>
+            <column name="dh_create_at" type="TIMESTAMP"/>
+            <column name="dh_update_at" type="TIMESTAMP"/>
+        </createTable>
+
+        <addUniqueConstraint schemaName="easyfood" tableName="user_system" columnNames="email" constraintName="uk_usuario_email"/>
+        <addForeignKeyConstraint baseTableSchemaName="easyfood" baseTableName="user_system" baseColumnNames="address_id"
+                                 referencedTableSchemaName="easyfood" referencedTableName="address" referencedColumnNames="id"
+                                 constraintName="fk_user_system_address"/>
+    </changeSet>
+
+</databaseChangeLog>

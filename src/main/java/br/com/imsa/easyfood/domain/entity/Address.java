@@ -19,4 +19,19 @@ public class Address extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "street")
+    private String street;
+
+    @Column(name = "neighborhood")
+    private String neighborhood;
+
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "number")
+    private String number;
+
+    @Column(name = "zip_code")
+    private String zipCode;
 }

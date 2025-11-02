@@ -58,8 +58,8 @@ public class ApiDocConfig {
     @Bean
     public GroupedOpenApi api1() {
         return GroupedOpenApi.builder()
-                .group("EMISSAO CRLV v1")
-                .packagesToScan("br.com.imsa.emissao.crlv.controller.v1")
+                .group("v1")
+                .packagesToScan("br.com.imsa.easyfood.api.controller.v1")
                 .build();
     }
 

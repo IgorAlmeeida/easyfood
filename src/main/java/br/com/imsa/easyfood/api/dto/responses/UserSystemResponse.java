@@ -18,9 +18,15 @@ public class UserSystemResponse {
 
     private String email;
 
+    private String name;
+
     private AddressResponse address;
 
-    private UserTypeEnum userType;
+    private String userType;
+
+    void setUserType(UserTypeEnum userTypeEnum) {
+        this.userType = userTypeEnum.getAcronym();
+    }
 
 
 

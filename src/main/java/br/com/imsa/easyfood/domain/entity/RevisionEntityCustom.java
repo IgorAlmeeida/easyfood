@@ -16,7 +16,7 @@ import org.hibernate.envers.RevisionTimestamp;
 @NoArgsConstructor
 @RevisionEntity(AuditListener.class)
 @Entity
-@Table(name = "revision_entity", schema = "easyfood_ava")
+@Table(name = "revision_entity", schema = "audit_easyfood")
 public class RevisionEntityCustom {
 
     @Id

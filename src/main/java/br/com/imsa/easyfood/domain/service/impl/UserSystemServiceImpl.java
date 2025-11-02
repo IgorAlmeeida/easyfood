@@ -46,6 +46,7 @@ public class UserSystemServiceImpl implements UserSystemService, UserDetailsServ
         userSystem = modelMapper.map(userSystemRequest, UserSystem.class);
         userSystem.setPassword(encoder.encode(userSystem.getPassword()));
         userSystem.setAddress(address);
+        userSystem.setActive(true);
 
         userSystemRepository.save(userSystem);
 

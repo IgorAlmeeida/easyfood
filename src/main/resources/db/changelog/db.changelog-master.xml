@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <include file="migrations/0000-initial-tag.xml" relativeToChangelogFile="true"/>
+    <include file="migrations/0001-create-schemas.xml" relativeToChangelogFile="true"/>
+    <include file="migrations/0002-create-revision-entity.xml" relativeToChangelogFile="true"/>
+    <include file="migrations/0003-create-core-tables.xml" relativeToChangelogFile="true"/>
+    <include file="migrations/0004-create-audit-tables.xml" relativeToChangelogFile="true"/>
+    <include file="migrations/0005-alter-address-add-fields.xml" relativeToChangelogFile="true"/>
+    <include file="migrations/0006-alter-address-number-to-varchar.xml" relativeToChangelogFile="true"/>
+
+</databaseChangeLog>

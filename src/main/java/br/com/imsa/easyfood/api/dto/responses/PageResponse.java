@@ -1,6 +1,6 @@
 package br.com.imsa.easyfood.api.dto.responses;
 
-import br.com.imsa.emissao.crlv.controller.v1.dto.PageableDto;
+import br.com.imsa.easyfood.api.dto.PageableDto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
