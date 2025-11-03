@@ -11,6 +11,8 @@ import br.com.imsa.easyfood.infrastructure.repository.UserSystemRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,7 @@ public class UserSystemCommandServiceImpl implements UserSystemCommandService {
     private final PasswordEncoder encoder;
     private final ModelMapper modelMapper;
     private final AddressService addressService;
+    private final MessageSource messageSource;
 
     @Override
     @Transactional
@@ -41,38 +44,39 @@ public class UserSystemCommandServiceImpl implements UserSystemCommandService {
 
     @Override
     @Transactional
-    public UserSystem updateUserSystem(Long id, UserSystemUpdateRequest userSystemUpdateRequest) {
-        UserSystem oldUserSystem = userSystemRepository.findById(id)
-                .orElseThrow(() -> new NegocioException("Usuário não encontrado."));
+    public UserSystem updateUserSystem(Long id, UserSystemUpdateRequest req) {
 
-        if (!userSystemUpdateRequest.getEmail().equals(oldUserSystem.getEmail())) {
-            validateEmailHasUser(userSystemUpdateRequest.getEmail());
+        UserSystem user = userSystemRepository.findById(id)
+                .orElseThrow(() -> new NegocioException(
+                        messageSource.getMessage("user.not.found", null, LocaleContextHolder.getLocale())));
+
+        if (req.getEmail() != null && !req.getEmail().equals(user.getEmail())) {
+            validateEmailHasUser(req.getEmail());
         }
 
-        // Atualiza endereço
-        addressService.updateAddress(oldUserSystem.getAddress(), userSystemUpdateRequest.getAddress());
+        if (req.getAddress() != null) {
+            addressService.updateAddress(user.getAddress(), req.getAddress());
+        }
 
-        // Recria (ou mapeia) a entidade preservando o id
-        oldUserSystem = modelMapper.map(userSystemUpdateRequest, UserSystem.class);
-        oldUserSystem.setId(id);
-        oldUserSystem.setPassword(encoder.encode(oldUserSystem.getPassword()));
+        modelMapper.map(req, user);
+        userSystemRepository.save(user);
 
-        userSystemRepository.save(oldUserSystem);
-        return oldUserSystem;
+        return user;
     }
+
 
     @Override
     @Transactional
     public void deleteUserSystem(Long id) {
         UserSystem userSystem = userSystemRepository.findById(id)
-                .orElseThrow(() -> new NegocioException("Usuário não encontrado."));
+                .orElseThrow(() -> new NegocioException(messageSource.getMessage("user.not.found", null, LocaleContextHolder.getLocale())));
         userSystemRepository.delete(userSystem);
     }
 
     private void validateEmailHasUser(String email){
         UserSystem userSystem = userSystemRepository.findUserSystemByEmail(email).orElse(null);
         if (userSystem != null){
-            throw new NegocioException("Email já cadastrado.");
+            throw new NegocioException(messageSource.getMessage("email.already.registered", null, LocaleContextHolder.getLocale()));
         }
     }
 }

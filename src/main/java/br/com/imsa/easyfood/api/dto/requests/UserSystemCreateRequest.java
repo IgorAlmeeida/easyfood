@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(name = "UserSystemRequest", description = "Payload to create or update a system user")
+@Schema(name = "UserSystemCreateRequest", description = "Payload to create or update a system user")
 public class UserSystemCreateRequest {
 
     @Schema(description = "Unique username for login", example = "jdoe")

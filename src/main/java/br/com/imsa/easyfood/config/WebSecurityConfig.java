@@ -50,7 +50,7 @@ public class WebSecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authz -> authz
                     .requestMatchers("/api/auth/v1/login").permitAll()
-                    .requestMatchers(HttpMethod.POST,"/api/user-system/v1/").permitAll()
+                    .requestMatchers(HttpMethod.POST,"/api/user-system/v1").permitAll()
                     .requestMatchers("/swagger-ui.html").permitAll()
                     .requestMatchers("/swagger-ui/**").permitAll()
                     .requestMatchers("/v3/api-docs/**").permitAll()

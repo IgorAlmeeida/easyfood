@@ -5,6 +5,8 @@ import br.com.imsa.easyfood.domain.service.UserSystemQueryService;
 import br.com.imsa.easyfood.exception.NegocioException;
 import br.com.imsa.easyfood.infrastructure.repository.UserSystemRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import java.util.Optional;
 public class UserSystemQueryServiceImpl implements UserSystemQueryService {
 
     private final UserSystemRepository userSystemRepository;
+    private final MessageSource messageSource;
 
     @Override
     public Page<UserSystem> getAllUserSystems(Pageable pageable, String name) {
@@ -30,7 +33,7 @@ public class UserSystemQueryServiceImpl implements UserSystemQueryService {
     @Override
     public UserSystem getUserSystem(Long id) {
         return userSystemRepository.findById(id)
-                .orElseThrow(() -> new NegocioException("Usuário não encontrado."));
+                .orElseThrow(() -> new NegocioException(messageSource.getMessage("user.not.found", null, LocaleContextHolder.getLocale())));
     }
 
     @Override

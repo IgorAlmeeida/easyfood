@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(name = "UserSystemRequest", description = "Payload to create or update a system user")
+@Schema(name = "UserSystemUpdateRequest", description = "Payload to create or update a system user")
 public class UserSystemUpdateRequest {
 
     @Schema(description = "Unique username for login", example = "jdoe")
@@ -33,10 +33,6 @@ public class UserSystemUpdateRequest {
     @Schema(description = "Type of user", example = "CLIENT")
     @NotNull(message = "{validation.user.type.required}")
     private UserTypeEnum userType;
-
-    @Schema(description = "Account password", example = "Str0ngP@ss!")
-    @NotBlank(message = "{validation.user.password.required}")
-    private String password;
 
     @Schema(description = "User address")
     @NotNull(message = "{validation.user.address.required}")

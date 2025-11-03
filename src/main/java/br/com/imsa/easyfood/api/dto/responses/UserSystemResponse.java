@@ -1,6 +1,7 @@
 package br.com.imsa.easyfood.api.dto.responses;
 
 import br.com.imsa.easyfood.domain.enums.UserTypeEnum;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,8 +36,10 @@ public class UserSystemResponse {
     private UserTypeEnum userType;
 
     @Schema(description = "Creation Date", example = "2025-11-02T22:26:10")
-    private LocalDateTime createdAt;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime createAt;
 
     @Schema(description = "Last Modification Date", example = "2025-11-02T22:26:10")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updateAt;
 }

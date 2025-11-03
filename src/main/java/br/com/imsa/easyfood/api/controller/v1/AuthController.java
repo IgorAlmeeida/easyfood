@@ -16,6 +16,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,6 +35,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final UserSystemPasswordService userSystemPasswordService;
     private final TokenProvider tokenProvider;
+    private final MessageSource messageSource;
 
     @Value("${app.jwtExpirationMs}")
     private int jwtExpirationMs;
@@ -52,7 +55,7 @@ public class AuthController {
                     new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
             );
         } catch (Exception e) {
-            throw new NegocioException("Usuário ou senha inválidas");
+            throw new NegocioException(messageSource.getMessage("auth.credentials.bad", null, LocaleContextHolder.getLocale()));
         }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
