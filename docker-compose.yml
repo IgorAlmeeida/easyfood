@@ -22,5 +22,22 @@ services:
       # Allows Spring Boot to auto-configure a DataSource from this container when running with spring-boot-docker-compose
       org.springframework.boot.service-connection: postgres
 
+  app:
+    build: .
+    container_name: easyfood-app
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: prd
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/dbeasyfood
+      SPRING_DATASOURCE_USERNAME: easyfood
+      SPRING_DATASOURCE_PASSWORD: easyfood
+
+      JAVA_OPTS: -Xms256m -Xmx512m
+    ports:
+      - "8090:8090"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   easyfood-db-data:
