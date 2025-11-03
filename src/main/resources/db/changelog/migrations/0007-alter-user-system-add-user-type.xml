@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        logicalFilePath="db/changelog/0007-alter-user-system-add-user-type.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="0007-alter-user-system-add-user-type" author="system">
+        <comment>Adiciona coluna user_type (VARCHAR(1)) na tabela easyfood.user_system e na tabela de auditoria</comment>
+
+        <!-- Tabela principal -->
+        <addColumn tableName="user_system" schemaName="easyfood">
+            <column name="user_type" type="VARCHAR(1)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <!-- Tabela de auditoria para UserSystem (Hibernate Envers) -->
+        <addColumn tableName="user_system_audit" schemaName="audit_easyfood">
+            <column name="user_type" type="VARCHAR(1)"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,9 +1,12 @@
 package br.com.imsa.easyfood.config;
 
+import br.com.imsa.easyfood.config.jwt.AuthEntryPointJwt;
 import br.com.imsa.easyfood.config.jwt.AuthTokenFilter;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -41,7 +44,8 @@ public class WebSecurityConfig {
   }
 
   @Bean
-  public SecurityFilterChain web(HttpSecurity http) throws Exception {
+  public SecurityFilterChain web(HttpSecurity http,
+                                 AuthEntryPointJwt authEntryPointJwt) throws Exception {
     http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authz -> authz
@@ -51,11 +55,22 @@ public class WebSecurityConfig {
                     .requestMatchers("/swagger-ui/**").permitAll()
                     .requestMatchers("/v3/api-docs/**").permitAll()
                     .anyRequest().authenticated()
+            ).exceptionHandling(ex -> ex
+                    .authenticationEntryPoint(authEntryPointJwt)
             );
 
     http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }
+
+    @Bean
+    public MessageSource messageSource() {
+        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+        messageSource.setBasename("messages"); // sem .properties
+        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setUseCodeAsDefaultMessage(true);
+        return messageSource;
+    }
 
 }

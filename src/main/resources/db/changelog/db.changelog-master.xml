@@ -12,5 +12,7 @@
     <include file="migrations/0004-create-audit-tables.xml" relativeToChangelogFile="true"/>
     <include file="migrations/0005-alter-address-add-fields.xml" relativeToChangelogFile="true"/>
     <include file="migrations/0006-alter-address-number-to-varchar.xml" relativeToChangelogFile="true"/>
+    <include file="migrations/0007-alter-user-system-add-user-type.xml" relativeToChangelogFile="true"/>
+    <include file="migrations/0008-alter-user-system-add-unique-username.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

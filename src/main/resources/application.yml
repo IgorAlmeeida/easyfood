@@ -1,7 +1,6 @@
 language: pt
 country: BR
 
-spring.messages.fallback-to-system-locale: true
 server:
   servlet:
     contextPath: /
@@ -68,7 +67,8 @@ spring:
           audit_table_suffix: _audit
   messages:
     cache-seconds: 1
-    basename: locale
+    basename: messages
+    encoding: UTF-8
   mvc:
     problem_details.enabled: true
 

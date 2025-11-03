@@ -1,7 +1,7 @@
 package br.com.imsa.easyfood.api.dto.requests;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,20 +11,26 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(name = "AddressRequest", description = "Request payload with user address information")
 public class AddressRequest {
 
-    @NotBlank(message = "É necessário informar a rua.")
+    @Schema(description = "Street name", example = "Av. Paulista")
+    @NotBlank(message = "{validation.address.street.required}")
     private String street; // rua
 
-    @NotBlank(message = "É necessário informar o bairro.")
+    @Schema(description = "Neighborhood", example = "Bela Vista")
+    @NotBlank(message = "{validation.address.neighborhood.required}")
     private String neighborhood; // bairro
 
-    @NotBlank(message = "É necessário informar a cidade.")
+    @Schema(description = "City", example = "São Paulo")
+    @NotBlank(message = "{validation.address.city.required}")
     private String city; // cidade
 
-    @NotBlank(message = "É necessário informar o número.")
+    @Schema(description = "House or building number", example = "1000")
+    @NotBlank(message = "{validation.address.number.required}")
     private String number; // numero
 
-    @NotBlank(message = "É necessário informar o CEP.")
+    @Schema(description = "ZIP/Postal code", example = "01310100")
+    @NotBlank(message = "{validation.address.zipcode.required}")
     private String zipCode; // cep
 }

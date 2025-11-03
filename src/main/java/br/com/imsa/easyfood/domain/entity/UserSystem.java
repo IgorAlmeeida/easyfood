@@ -1,5 +1,6 @@
 package br.com.imsa.easyfood.domain.entity;
 
+import br.com.imsa.easyfood.domain.enums.UserTypeEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -41,6 +42,9 @@ public class UserSystem extends Auditable implements UserDetails {
 
     @Column(name = "active", nullable = false)
     private boolean active;
+
+    @Column(name = "user_type", nullable = false)
+    private UserTypeEnum userType;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
