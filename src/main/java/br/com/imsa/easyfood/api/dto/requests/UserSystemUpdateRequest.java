@@ -15,7 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Schema(name = "UserSystemRequest", description = "Payload to create or update a system user")
-public class UserSystemRequest {
+public class UserSystemUpdateRequest {
 
     @Schema(description = "Unique username for login", example = "jdoe")
     @NotBlank(message = "{validation.user.username.required}")

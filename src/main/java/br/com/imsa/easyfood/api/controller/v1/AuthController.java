@@ -3,9 +3,9 @@ package br.com.imsa.easyfood.api.controller.v1;
 import br.com.imsa.easyfood.api.dto.requests.ChangePasswordRequest;
 import br.com.imsa.easyfood.api.dto.requests.LoginRequest;
 import br.com.imsa.easyfood.api.dto.responses.LoginResponse;
-import br.com.imsa.easyfood.config.jwt.JwtUtils;
 import br.com.imsa.easyfood.domain.entity.UserSystem;
-import br.com.imsa.easyfood.domain.service.UserSystemService;
+import br.com.imsa.easyfood.domain.provider.TokenProvider;
+import br.com.imsa.easyfood.domain.service.UserSystemPasswordService;
 import br.com.imsa.easyfood.exception.NegocioException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -31,8 +31,8 @@ import org.springframework.security.core.Authentication;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
-    private final JwtUtils jwtUtils;
-    private final UserSystemService userSystemService;
+    private final UserSystemPasswordService userSystemPasswordService;
+    private final TokenProvider tokenProvider;
 
     @Value("${app.jwtExpirationMs}")
     private int jwtExpirationMs;
@@ -60,7 +60,7 @@ public class AuthController {
         UserSystem userSystem = (UserSystem) authentication.getPrincipal();
 
         return ResponseEntity.ok(new LoginResponse(
-                jwtUtils.generateJwtToken(authentication),
+                tokenProvider.generate(authentication),
                 "Bearer",
                 userSystem.getUsername(),
                 jwtExpirationMs));
@@ -76,7 +76,7 @@ public class AuthController {
     public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserSystem userSystem = (UserSystem) authentication.getPrincipal();
-        this.userSystemService.changePassword(userSystem.getId(), changePasswordRequest.getOldPassword(), changePasswordRequest.getNewPassword());
+        this.userSystemPasswordService.changePassword(userSystem.getId(), changePasswordRequest.getOldPassword(), changePasswordRequest.getNewPassword());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

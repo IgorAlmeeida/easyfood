@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -32,4 +34,9 @@ public class UserSystemResponse {
     @Schema(description = "User type acronym", example = "CLIENT")
     private UserTypeEnum userType;
 
+    @Schema(description = "Creation Date", example = "2025-11-02T22:26:10")
+    private LocalDateTime createdAt;
+
+    @Schema(description = "Last Modification Date", example = "2025-11-02T22:26:10")
+    private LocalDateTime updateAt;
 }
