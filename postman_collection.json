@@ -1,0 +1,993 @@
+{
+	"info": {
+		"_postman_id": "086a9796-4470-49e4-b950-32014e697fb1",
+		"name": "EasyFood - User & Auth Tests",
+		"description": "Coleção Postman para executar os casos de teste de Usuário e Autenticação conforme a documentação OpenAPI fornecida.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14713156",
+		"_collection_link": "https://www.postman.com/interstellar-capsule-627536/workspace/easyfood/collection/14713156-086a9796-4470-49e4-b950-32014e697fb1?action=share&source=collection_link&creator=14713156"
+	},
+	"item": [
+		{
+			"name": "1. Criar Usuário",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"",
+							"const base = `tester_${Date.now()}`;",
+							"pm.collectionVariables.set(\"userBase\", base);",
+							"pm.collectionVariables.set(\"username\", base);",
+							"pm.collectionVariables.set(\"email\", `${base}@example.com`);",
+							"pm.collectionVariables.set(\"altUsername\", `alt_${base}`);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status 201 Created\", function () {",
+							"  pm.response.to.have.status(201);",
+							"});",
+							"const json = pm.response.json();",
+							"pm.collectionVariables.set(\"userId\", json.id);",
+							"pm.test(\"Tem ID no corpo\", function () {",
+							"  pm.expect(json.id).to.be.ok;",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"{{username}}\",\n  \"name\": \"{{name}}\",\n  \"email\": \"{{email}}\",\n  \"userType\": \"{{userType}}\",\n  \"password\": \"{{password}}\",\n  \"address\": {\n    \"street\": \"{{street}}\",\n    \"neighborhood\": \"{{neighborhood}}\",\n    \"city\": \"{{city}}\",\n    \"number\": \"{{number}}\",\n    \"zipCode\": \"{{zipCode}}\"\n  }\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/user-system/v1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"user-system",
+						"v1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2. Criar Usuário - Mesmo Username (400)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status 400 Bad Request\", function () {",
+							"  pm.response.to.have.status(400);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"{{username}}\",\n  \"name\": \"{{name}}\",\n  \"email\": \"{{email}}\",\n  \"userType\": \"{{userType}}\",\n  \"password\": \"{{password}}\",\n  \"address\": {\n    \"street\": \"{{street}}\",\n    \"neighborhood\": \"{{neighborhood}}\",\n    \"city\": \"{{city}}\",\n    \"number\": \"{{number}}\",\n    \"zipCode\": \"{{zipCode}}\"\n  }\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/user-system/v1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"user-system",
+						"v1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3. Criar Usuário - Mesmo Email (400)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status 400 Bad Request\", function () {",
+							"  pm.response.to.have.status(400);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"{{altUsername}}\",\n  \"name\": \"{{name}}\",\n  \"email\": \"{{email}}\",\n  \"userType\": \"{{userType}}\",\n  \"password\": \"{{password}}\",\n  \"address\": {\n    \"street\": \"{{street}}\",\n    \"neighborhood\": \"{{neighborhood}}\",\n    \"city\": \"{{city}}\",\n    \"number\": \"{{number}}\",\n    \"zipCode\": \"{{zipCode}}\"\n  }\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/user-system/v1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"user-system",
+						"v1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4. Login Sucesso",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status 200 OK\", function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"const auth = pm.response.json();",
+							"pm.collectionVariables.set(\"authToken\", auth.token || \"\");",
+							"pm.test(\"Recebe token\", function () {",
+							"  pm.expect(pm.collectionVariables.get(\"authToken\")).to.not.equal(\"\");",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/auth/v1/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"v1",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5. Login Erro (400)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status 400 Bad Request\", function () {",
+							"  pm.response.to.have.status(400);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"WrongPass123\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/auth/v1/login",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"v1",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "6. Trocar Senha (204)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status 204 No Content\", function () {",
+							"  pm.response.to.have.status(204);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"oldPassword\": \"{{password}}\",\n  \"newPassword\": \"NewP@ss456\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/auth/v1/change-password",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"v1",
+						"change-password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "7. Trocar Senha - Requisição Inválida (400)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status 400 Bad Request\", function () {",
+							"  pm.response.to.have.status(400);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"oldPassword\": \"{{password}}\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/auth/v1/change-password",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"v1",
+						"change-password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "8. Trocar Senha - Sem Token (401)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status 401 Unauthorized\", function () {",
+							"  pm.response.to.have.status(401);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"oldPassword\": \"{{password}}\",\n  \"newPassword\": \"NewP@ss456\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/auth/v1/change-password",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"v1",
+						"change-password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "9. Buscar Usuário por ID (200)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status 200 OK\", function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/api/user-system/v1/{{userId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"user-system",
+						"v1",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "10. Buscar Usuário por ID Inexistente (404)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status 404 Not Found\", function () {",
+							"  pm.response.to.have.status(400);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/api/user-system/v1/99999999",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"user-system",
+						"v1",
+						"99999999"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "11. Listar Usuários (200)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status 200 OK\", function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/api/user-system/v1?name={{nameFilter}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"user-system",
+						"v1"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{nameFilter}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "12. Atualizar Usuário (200)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status 200 OK\", function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"{{username}}\",\n  \"name\": \"John Doe Updated\",\n  \"email\": \"{{email}}\",\n  \"userType\": \"{{userType}}\",\n  \"address\": {\n    \"street\": \"Rua Atualizada\",\n    \"neighborhood\": \"{{neighborhood}}\",\n    \"city\": \"{{city}}\",\n    \"number\": \"2000\",\n    \"zipCode\": \"{{zipCode}}\"\n  }\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/user-system/v1/{{userId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"user-system",
+						"v1",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "13. Criar Usuário Secundário (para conflitos)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"",
+							"const base2 = `secondary_${Date.now()}`;",
+							"pm.collectionVariables.set(\"secondaryUserBase\", base2);",
+							"pm.collectionVariables.set(\"secondaryUsername\", base2);",
+							"pm.collectionVariables.set(\"secondaryEmail\", `${base2}@example.com`);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status 201 Created\", function () {",
+							"  pm.response.to.have.status(201);",
+							"});",
+							"const json = pm.response.json();",
+							"pm.collectionVariables.set(\"secondaryUserId\", json.id);",
+							"pm.test(\"Tem ID no corpo\", function () {",
+							"  pm.expect(json.id).to.be.ok;",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"{{secondaryUsername}}\",\n  \"name\": \"Secondary User\",\n  \"email\": \"{{secondaryEmail}}\",\n  \"userType\": \"{{userType}}\",\n  \"password\": \"{{password}}\",\n  \"address\": {\n    \"street\": \"{{street}}\",\n    \"neighborhood\": \"{{neighborhood}}\",\n    \"city\": \"{{city}}\",\n    \"number\": \"{{number}}\",\n    \"zipCode\": \"{{zipCode}}\"\n  }\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/user-system/v1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"user-system",
+						"v1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "14. Atualizar Usuário - Email Duplicado (400)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status 400 Bad Request\", function () {",
+							"  pm.response.to.have.status(400);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"{{username}}\",\n  \"name\": \"John Doe Updated\",\n  \"email\": \"{{secondaryEmail}}\",\n  \"userType\": \"{{userType}}\",\n  \"address\": {\n    \"street\": \"Rua Atualizada\",\n    \"neighborhood\": \"{{neighborhood}}\",\n    \"city\": \"{{city}}\",\n    \"number\": \"2000\",\n    \"zipCode\": \"{{zipCode}}\"\n  }\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/user-system/v1/{{userId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"user-system",
+						"v1",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "15. Atualizar Usuário - Username Duplicado (400)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status 400 Bad Request\", function () {",
+							"  pm.response.to.have.status(409);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"{{secondaryUsername}}\",\n  \"name\": \"John Doe Updated\",\n  \"email\": \"{{email}}\",\n  \"userType\": \"{{userType}}\",\n  \"address\": {\n    \"street\": \"Rua Atualizada\",\n    \"neighborhood\": \"{{neighborhood}}\",\n    \"city\": \"{{city}}\",\n    \"number\": \"2000\",\n    \"zipCode\": \"{{zipCode}}\"\n  }\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/user-system/v1/{{userId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"user-system",
+						"v1",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "16. Atualizar Usuário - Dados Inválidos (400)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status 400 Bad Request\", function () {",
+							"  pm.response.to.have.status(400);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"{{username}}\",\n  \"name\": \"\",\n  \"email\": \"{{email}}\",\n  \"userType\": \"{{userType}}\",\n  \"address\": {\n    \"street\": \"Rua Atualizada\",\n    \"neighborhood\": \"{{neighborhood}}\",\n    \"city\": \"{{city}}\",\n    \"number\": \"2000\",\n    \"zipCode\": \"{{zipCode}}\"\n  }\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/user-system/v1/{{userId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"user-system",
+						"v1",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "17. Atualizar Usuário - ID Inexistente (404)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status 404 Not Found\", function () {",
+							"  pm.response.to.have.status(400);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"{{username}}\",\n  \"name\": \"John Doe Updated\",\n  \"email\": \"{{email}}\",\n  \"userType\": \"{{userType}}\",\n  \"address\": {\n    \"street\": \"Rua Atualizada\",\n    \"neighborhood\": \"{{neighborhood}}\",\n    \"city\": \"{{city}}\",\n    \"number\": \"2000\",\n    \"zipCode\": \"{{zipCode}}\"\n  }\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/user-system/v1/99999999",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"user-system",
+						"v1",
+						"99999999"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "18. Deletar Usuário (204)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status 204 No Content\", function () {",
+							"  pm.response.to.have.status(204);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/api/user-system/v1/{{userId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"user-system",
+						"v1",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "19. Deletar Usuário Inexistente (404)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status 404 Not Found\", function () {",
+							"  pm.response.to.have.status(401);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/api/user-system/v1/99999999",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"user-system",
+						"v1",
+						"99999999"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8090"
+		},
+		{
+			"key": "authToken",
+			"value": ""
+		},
+		{
+			"key": "userId",
+			"value": ""
+		},
+		{
+			"key": "userBase",
+			"value": ""
+		},
+		{
+			"key": "username",
+			"value": ""
+		},
+		{
+			"key": "email",
+			"value": ""
+		},
+		{
+			"key": "password",
+			"value": "Str0ngP@ss!1"
+		},
+		{
+			"key": "name",
+			"value": "John Doe"
+		},
+		{
+			"key": "userType",
+			"value": "CLIENT"
+		},
+		{
+			"key": "street",
+			"value": "Av. Paulista"
+		},
+		{
+			"key": "neighborhood",
+			"value": "Bela Vista"
+		},
+		{
+			"key": "city",
+			"value": "São Paulo"
+		},
+		{
+			"key": "number",
+			"value": "1000"
+		},
+		{
+			"key": "zipCode",
+			"value": "01310100"
+		},
+		{
+			"key": "altUsername",
+			"value": ""
+		},
+		{
+			"key": "secondaryUserId",
+			"value": ""
+		},
+		{
+			"key": "secondaryUserBase",
+			"value": ""
+		},
+		{
+			"key": "secondaryUsername",
+			"value": ""
+		},
+		{
+			"key": "secondaryEmail",
+			"value": ""
+		},
+		{
+			"key": "nameFilter",
+			"value": "John"
+		}
+	]
+}

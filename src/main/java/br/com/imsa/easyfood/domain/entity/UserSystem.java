@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.envers.AuditTable;
+import org.hibernate.envers.Audited;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -19,8 +20,10 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "user_system", schema = "easyfood", uniqueConstraints = {
-    @UniqueConstraint(name = "uk_usuario_email", columnNames = "email")
+    @UniqueConstraint(name = "uk_usuario_email", columnNames = "email"),
+    @UniqueConstraint(name = "uk_usuario_username", columnNames = "username"),
 })
+@Audited
 @AuditTable(value = "user_system_audit", schema = "audit_easyfood")
 public class UserSystem extends Auditable implements UserDetails {
 

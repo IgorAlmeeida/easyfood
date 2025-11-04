@@ -1,0 +1,792 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "EasyFood",
+    "description": "EasyFood app Documentation!",
+    "contact": {
+      "name": "IGOR MAURO SILVA DE ALMEIDA",
+      "url": "https://github.com/IgorAlmeeida/easyfood.git",
+      "email": "imsasoftwarebrasil@gmail.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8090",
+      "description": "Generated server url"
+    }
+  ],
+  "security": [
+    {
+      "Security Scheme": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "Endpoints for user authentication and password management"
+    },
+    {
+      "name": "UserSystem",
+      "description": "CRUD operations for users of the system"
+    }
+  ],
+  "paths": {
+    "/api/user-system/v1/{id}": {
+      "get": {
+        "tags": [
+          "UserSystem"
+        ],
+        "summary": "Get user by id",
+        "description": "Retrieves a user by its identifier",
+        "operationId": "getUserSystem",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "exclusiveMinimum": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User found",
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSystemResponse"
+                }
+              },
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSystemResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "UserSystem"
+        ],
+        "summary": "Update user",
+        "description": "Updates an existing user's information",
+        "operationId": "updateInfoUserSystem",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSystemUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "User updated successfully",
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSystemResponse"
+                }
+              },
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSystemResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "UserSystem"
+        ],
+        "summary": "Delete user",
+        "description": "Deletes a user by its identifier",
+        "operationId": "deleteUserSystem",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "User deleted successfully"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/api/user-system/v1": {
+      "get": {
+        "tags": [
+          "UserSystem"
+        ],
+        "summary": "List users",
+        "description": "Returns a paginated list of users; optional name filter",
+        "operationId": "getUserSystems",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of users returned",
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageableDto"
+                }
+              },
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageableDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "UserSystem"
+        ],
+        "summary": "Create user",
+        "description": "Registers a new user in the system",
+        "operationId": "registerUserSystem",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSystemCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSystemResponse"
+                }
+              },
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSystemResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/v1/login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Authenticate user",
+        "description": "Authenticates a user and returns a JWT token.",
+        "operationId": "loginUserSystem",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Authentication successful",
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              },
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid credentials",
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/v1/change-password": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Change password",
+        "description": "Changes the password of the currently authenticated user.",
+        "operationId": "changePassword",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Password changed successfully"
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json;charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              },
+              "application/json; charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AddressRequest": {
+        "type": "object",
+        "description": "Request payload with user address information",
+        "properties": {
+          "street": {
+            "type": "string",
+            "description": "Street name",
+            "example": "Av. Paulista",
+            "minLength": 1
+          },
+          "neighborhood": {
+            "type": "string",
+            "description": "Neighborhood",
+            "example": "Bela Vista",
+            "minLength": 1
+          },
+          "city": {
+            "type": "string",
+            "description": "City",
+            "example": "São Paulo",
+            "minLength": 1
+          },
+          "number": {
+            "type": "string",
+            "description": "House or building number",
+            "example": 1000,
+            "minLength": 1
+          },
+          "zipCode": {
+            "type": "string",
+            "description": "ZIP/Postal code",
+            "example": "01310100",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "city",
+          "neighborhood",
+          "number",
+          "street",
+          "zipCode"
+        ]
+      },
+      "UserSystemUpdateRequest": {
+        "type": "object",
+        "description": "Payload to create or update a system user",
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "Unique username for login",
+            "example": "jdoe",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Full name of the user",
+            "example": "John Doe",
+            "minLength": 1
+          },
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "example": "john.doe@example.com"
+          },
+          "userType": {
+            "type": "string",
+            "description": "Type of user",
+            "enum": [
+              "CLIENT",
+              "OWNER"
+            ],
+            "example": "CLIENT"
+          },
+          "address": {
+            "$ref": "#/components/schemas/AddressRequest",
+            "description": "User address"
+          }
+        },
+        "required": [
+          "address",
+          "email",
+          "name",
+          "userType",
+          "username"
+        ]
+      },
+      "AddressResponse": {
+        "type": "object",
+        "description": "Address information associated with the user",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Address identifier",
+            "example": 1
+          },
+          "street": {
+            "type": "string",
+            "description": "Street name",
+            "example": "Av. Paulista"
+          },
+          "neighborhood": {
+            "type": "string",
+            "description": "Neighborhood",
+            "example": "Bela Vista"
+          },
+          "city": {
+            "type": "string",
+            "description": "City",
+            "example": "São Paulo"
+          },
+          "number": {
+            "type": "string",
+            "description": "House or building number",
+            "example": 1000
+          },
+          "zipCode": {
+            "type": "string",
+            "description": "ZIP/Postal code",
+            "example": "01310100"
+          }
+        }
+      },
+      "UserSystemResponse": {
+        "type": "object",
+        "description": "User data returned by the API",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "User identifier",
+            "example": 1
+          },
+          "username": {
+            "type": "string",
+            "description": "Unique username",
+            "example": "jdoe"
+          },
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "example": "john.doe@example.com"
+          },
+          "name": {
+            "type": "string",
+            "description": "Full name",
+            "example": "John Doe"
+          },
+          "address": {
+            "$ref": "#/components/schemas/AddressResponse",
+            "description": "User address"
+          },
+          "userType": {
+            "type": "string",
+            "description": "User type acronym",
+            "enum": [
+              "CLIENT",
+              "OWNER"
+            ],
+            "example": "CLIENT"
+          },
+          "createAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation Date",
+            "example": "2025-11-02T22:26:10"
+          },
+          "updateAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last Modification Date",
+            "example": "2025-11-02T22:26:10"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "instance": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            }
+          }
+        }
+      },
+      "ValidationError": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "UserSystemCreateRequest": {
+        "type": "object",
+        "description": "Payload to create or update a system user",
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "Unique username for login",
+            "example": "jdoe",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "Full name of the user",
+            "example": "John Doe",
+            "minLength": 1
+          },
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "example": "john.doe@example.com"
+          },
+          "userType": {
+            "type": "string",
+            "description": "Type of user",
+            "enum": [
+              "CLIENT",
+              "OWNER"
+            ],
+            "example": "CLIENT"
+          },
+          "password": {
+            "type": "string",
+            "description": "Account password",
+            "example": "Str0ngP@ss!",
+            "minLength": 1
+          },
+          "address": {
+            "$ref": "#/components/schemas/AddressRequest",
+            "description": "User address"
+          }
+        },
+        "required": [
+          "address",
+          "email",
+          "name",
+          "password",
+          "userType",
+          "username"
+        ]
+      },
+      "LoginRequest": {
+        "type": "object",
+        "description": "Credentials used to authenticate a user",
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "Username for login",
+            "example": "jdoe",
+            "minLength": 1
+          },
+          "password": {
+            "type": "string",
+            "description": "Password for login",
+            "example": "Str0ngP@ss!",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "password",
+          "username"
+        ]
+      },
+      "LoginResponse": {
+        "type": "object",
+        "description": "Response returned after successful authentication",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "JWT access token"
+          },
+          "type": {
+            "type": "string",
+            "description": "Token type",
+            "example": "Bearer"
+          },
+          "username": {
+            "type": "string",
+            "description": "Authenticated username",
+            "example": "jdoe"
+          },
+          "tokenExpiryDuration": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Token expiration duration in milliseconds",
+            "example": 86400000
+          }
+        }
+      },
+      "ChangePasswordRequest": {
+        "type": "object",
+        "description": "Payload to change the current user's password",
+        "properties": {
+          "oldPassword": {
+            "type": "string",
+            "description": "Current password",
+            "example": "OldP@ss123",
+            "minLength": 1
+          },
+          "newPassword": {
+            "type": "string",
+            "description": "New password",
+            "example": "NewP@ss456",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "newPassword",
+          "oldPassword"
+        ]
+      },
+      "PageableDto": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+
+            }
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageElements": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Security Scheme": {
+        "type": "http",
+        "in": "header",
+        "scheme": "Bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

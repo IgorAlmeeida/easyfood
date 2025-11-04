@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.envers.AuditTable;
+import org.hibernate.envers.Audited;
 
 @Getter
 @Setter
@@ -13,6 +14,7 @@ import org.hibernate.envers.AuditTable;
 @NoArgsConstructor
 @Entity
 @Table(name = "address", schema = "easyfood")
+@Audited
 @AuditTable(value = "address_audit", schema = "audit_easyfood")
 public class Address extends Auditable {
 
