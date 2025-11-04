@@ -8,6 +8,7 @@ import br.com.imsa.easyfood.api.dto.responses.UserSystemResponse;
 import br.com.imsa.easyfood.domain.entity.UserSystem;
 import br.com.imsa.easyfood.domain.service.UserSystemCommandService;
 import br.com.imsa.easyfood.domain.service.UserSystemQueryService;
+import br.com.imsa.easyfood.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -43,7 +44,7 @@ public class UserSystemController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "User created successfully",
                     content = @Content(schema = @Schema(implementation = UserSystemResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Validation error", content = @Content)
+            @ApiResponse(responseCode = "400", description = "Validation error", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<UserSystemResponse> registerUserSystem(@Valid @RequestBody UserSystemCreateRequest userSystemCreateRequest) {
         UserSystem userSystem = userSystemCommandService.createUserSystem(userSystemCreateRequest);
@@ -55,7 +56,7 @@ public class UserSystemController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User found",
                     content = @Content(schema = @Schema(implementation = UserSystemResponse.class))),
-            @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<UserSystemResponse> getUserSystem(@PathVariable @NotNull @Positive Long id) {
         UserSystem userSystem = userSystemQueryService.getUserSystem(id);
@@ -84,8 +85,8 @@ public class UserSystemController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User updated successfully",
                     content = @Content(schema = @Schema(implementation = UserSystemResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Validation error", content = @Content),
-            @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
+            @ApiResponse(responseCode = "400", description = "Validation error", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<UserSystemResponse> updateInfoUserSystem(@PathVariable Long id,
                                                                    @Valid @RequestBody UserSystemUpdateRequest userSystemUpdateRequest) {

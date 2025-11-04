@@ -7,6 +7,7 @@ import br.com.imsa.easyfood.domain.entity.UserSystem;
 import br.com.imsa.easyfood.domain.provider.TokenProvider;
 import br.com.imsa.easyfood.domain.service.UserSystemPasswordService;
 import br.com.imsa.easyfood.exception.NegocioException;
+import br.com.imsa.easyfood.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -45,8 +46,8 @@ public class AuthController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Authentication successful",
                     content = @Content(schema = @Schema(implementation = LoginResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid credentials", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Server error", content = @Content)
+            @ApiResponse(responseCode = "400", description = "Invalid credentials", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Server error", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<LoginResponse> loginUserSystem(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication;
@@ -73,8 +74,8 @@ public class AuthController {
     @Operation(summary = "Change password", description = "Changes the password of the currently authenticated user.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Password changed successfully", content = @Content),
-            @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content),
-            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
+            @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
