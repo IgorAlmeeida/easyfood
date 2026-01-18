@@ -1,52 +1,51 @@
 package br.com.imsa.easyfood.domain.service.impl;
 
-import br.com.imsa.easyfood.api.dto.requests.UserSystemCreateRequest;
-import br.com.imsa.easyfood.api.dto.requests.UserSystemUpdateRequest;
-import br.com.imsa.easyfood.domain.entity.Address;
-import br.com.imsa.easyfood.domain.entity.UserSystem;
-import br.com.imsa.easyfood.domain.service.AddressService;
+import br.com.imsa.easyfood.application.v1.dto.requests.UserSystemCreateRequest;
+import br.com.imsa.easyfood.application.v1.dto.requests.UserSystemUpdateRequest;
+import br.com.imsa.easyfood.infra.model.AddressJpaEntity;
+import br.com.imsa.easyfood.infra.model.UserSystemJpaEntity;
 import br.com.imsa.easyfood.domain.service.UserSystemCommandService;
 import br.com.imsa.easyfood.exception.NegocioException;
-import br.com.imsa.easyfood.infrastructure.repository.UserSystemRepository;
+import br.com.imsa.easyfood.domain.gateway.UserSystemGateway;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
+import br.com.imsa.easyfood.application.usecase.UseCase;
+import br.com.imsa.easyfood.infra.mappers.UserSystemMapper;
 
-@Service
+@UseCase
 @RequiredArgsConstructor
 public class UserSystemCommandServiceImpl implements UserSystemCommandService {
 
-    private final UserSystemRepository userSystemRepository;
+    private final UserSystemGateway userSystemGateway;
     private final PasswordEncoder encoder;
-    private final ModelMapper modelMapper;
     private final AddressService addressService;
     private final MessageSource messageSource;
+    private final UserSystemMapper userSystemMapper;
 
     @Override
     @Transactional
-    public UserSystem createUserSystem(UserSystemCreateRequest userSystemCreateRequest) {
+    public UserSystemJpaEntity createUserSystem(UserSystemCreateRequest userSystemCreateRequest) {
         validateEmailHasUser(userSystemCreateRequest.getEmail());
 
-        Address address = addressService.createAddress(userSystemCreateRequest.getAddress());
+        AddressJpaEntity addressJpaEntity = addressService.createAddress(userSystemCreateRequest.getAddress());
 
-        UserSystem userSystem = modelMapper.map(userSystemCreateRequest, UserSystem.class);
-        userSystem.setPassword(encoder.encode(userSystem.getPassword()));
-        userSystem.setAddress(address);
-        userSystem.setActive(true);
+        UserSystemJpaEntity userSystemJpaEntity = userSystemMapper.toEntity(userSystemCreateRequest);
+        userSystemJpaEntity.setPassword(encoder.encode(userSystemJpaEntity.getPassword()));
+        userSystemJpaEntity.setAddressJpaEntity(addressJpaEntity);
+        userSystemJpaEntity.setActive(true);
 
-        userSystemRepository.save(userSystem);
-        return userSystem;
+        userSystemGateway.save(userSystemJpaEntity);
+        return userSystemJpaEntity;
     }
 
     @Override
     @Transactional
-    public UserSystem updateUserSystem(Long id, UserSystemUpdateRequest req) {
+    public UserSystemJpaEntity updateUserSystem(Long id, UserSystemUpdateRequest req) {
 
-        UserSystem user = userSystemRepository.findById(id)
+        UserSystemJpaEntity user = userSystemGateway.findById(id)
                 .orElseThrow(() -> new NegocioException(
                         messageSource.getMessage("user.not.found", null, LocaleContextHolder.getLocale())));
 
@@ -55,11 +54,11 @@ public class UserSystemCommandServiceImpl implements UserSystemCommandService {
         }
 
         if (req.getAddress() != null) {
-            addressService.updateAddress(user.getAddress(), req.getAddress());
+            addressService.updateAddress(user.getAddressJpaEntity(), req.getAddress());
         }
 
-        modelMapper.map(req, user);
-        userSystemRepository.save(user);
+        userSystemMapper.update(user, req);
+        userSystemGateway.save(user);
 
         return user;
     }
@@ -68,14 +67,14 @@ public class UserSystemCommandServiceImpl implements UserSystemCommandService {
     @Override
     @Transactional
     public void deleteUserSystem(Long id) {
-        UserSystem userSystem = userSystemRepository.findById(id)
+        UserSystemJpaEntity userSystemJpaEntity = userSystemGateway.findById(id)
                 .orElseThrow(() -> new NegocioException(messageSource.getMessage("user.not.found", null, LocaleContextHolder.getLocale())));
-        userSystemRepository.delete(userSystem);
+        userSystemGateway.delete(userSystemJpaEntity);
     }
 
     private void validateEmailHasUser(String email){
-        UserSystem userSystem = userSystemRepository.findUserSystemByEmail(email).orElse(null);
-        if (userSystem != null){
+        UserSystemJpaEntity userSystemJpaEntity = userSystemGateway.findByEmail(email).orElse(null);
+        if (userSystemJpaEntity != null){
             throw new NegocioException(messageSource.getMessage("email.already.registered", null, LocaleContextHolder.getLocale()));
         }
     }

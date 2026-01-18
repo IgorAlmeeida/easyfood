@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
-        logicalFilePath="db/changelog/0005-alter-address-add-fields.xml"
+        logicalFilePath="db/changelog/0005-alter-addressJpaEntity-add-fields.xml"
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
-    <changeSet id="0005-alter-address-add-fields" author="system">
-        <comment>Adiciona colunas de endereço (rua, bairro, cidade, número, cep) na tabela easyfood.address e na tabela de auditoria</comment>
+    <changeSet id="0005-alter-addressJpaEntity-add-fields" author="system">
+        <comment>Adiciona colunas de endereço (rua, bairro, cidade, número, cep) na tabela easyfood.addressJpaEntity e na tabela de auditoria</comment>
 
         <!-- Tabela principal -->
-        <addColumn tableName="address" schemaName="easyfood">
+        <addColumn tableName="addressJpaEntity" schemaName="easyfood">
             <column name="street" type="VARCHAR(255)"/>
             <column name="neighborhood" type="VARCHAR(255)"/>
             <column name="city" type="VARCHAR(255)"/>
