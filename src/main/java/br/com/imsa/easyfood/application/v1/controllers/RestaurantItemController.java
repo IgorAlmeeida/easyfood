@@ -99,14 +99,15 @@ public class RestaurantItemController {
     }
 
     @GetMapping
-    @Operation(summary = "List restaurant items", description = "Returns a paginated list of items; optional description filter")
+    @Operation(summary = "List restaurant items", description = "Returns a paginated list of items; optional filters: description and restaurantId")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of restaurant items returned")
     })
     public ResponseEntity<PageableDto> getRestaurantItems(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) @Schema(hidden = true) Pageable pageable,
-                                                          @RequestParam(value = "description", required = false) String description){
+                                                          @RequestParam(value = "description", required = false) String description,
+                                                          @RequestParam(value = "restaurantId", required = false) Long restaurantId){
         SearchRestaurantItemUseCase search = new SearchRestaurantItemUseCase(restaurantItemGateway());
-        Page<RestaurantItem> page = (description != null && !description.isEmpty()) ? search.execute(pageable, description) : search.execute(pageable);
+        Page<RestaurantItem> page = search.execute(pageable, restaurantId, description);
         return new ResponseEntity<>(PageResponse.pageabletoDto(page, restaurantItemMapperApp::toRestaurantItemResponse), HttpStatus.OK);
     }
 

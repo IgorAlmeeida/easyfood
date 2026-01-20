@@ -61,12 +61,13 @@ public class UserSystemController {
     private final AddressMapper addressMapper;       // infra mapper for gateways
     private final UserSystemMapperApp userSystemMapperApp; // app-level mapper for API
     private final PasswordEncoder encoder;        // app-level mapper for API
+    private final UserTypeRepository repository;
 
     private final UserTypeMapper userTypeMapper;
     private final UserTypeRepository userTypeRepository;
 
     private UserSystemEntityRepository userSystemGateway() {
-        return new UserSystemEntityRepository(userSystemRepository, userSystemMapper, encoder);
+        return new UserSystemEntityRepository(userSystemRepository, repository, userSystemMapper,encoder);
     }
 
     private AddressEntityRepository addressGateway() {
@@ -144,7 +145,7 @@ public class UserSystemController {
                 req.getName(),
                 req.getEmail(),
                 req.getUserType(),
-                null,
+                true,
                 toUpdateAddressInput(req.getAddress())
         );
         UpdateUserSystemUseCase useCase = new UpdateUserSystemUseCase(userSystemGateway(), addressGateway(), userTypeGateway());

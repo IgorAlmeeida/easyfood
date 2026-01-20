@@ -19,5 +19,6 @@
     <include file="migrations/0011-alter-address-audit-ensure-columns.xml" relativeToChangelogFile="true"/>
     <include file="migrations/0012-alter-restaurant-item-add-availability.xml" relativeToChangelogFile="true"/>
     <include file="migrations/0013-alter-add-pending-columns.xml" relativeToChangelogFile="true"/>
+    <include file="migrations/0014-drop-user-type.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

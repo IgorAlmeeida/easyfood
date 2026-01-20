@@ -47,7 +47,7 @@ public class UserSystemJpaEntity extends Auditable implements UserDetails {
     @Column(name = "active", nullable = false)
     private boolean active;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_type_id")
     private UserTypeJpaEntity userType;
 

@@ -9,4 +9,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RestaurantItemRepository extends JpaRepository<RestaurantItemJpaEntity, Long> {
     Page<RestaurantItemJpaEntity> findByDescriptionContainingIgnoreCase(String description, Pageable pageable);
+
+    Page<RestaurantItemJpaEntity> findByRestaurant_Id(Long restaurantId, Pageable pageable);
+
+    Page<RestaurantItemJpaEntity> findByRestaurant_IdAndDescriptionContainingIgnoreCase(Long restaurantId, String description, Pageable pageable);
 }

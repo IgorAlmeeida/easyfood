@@ -90,7 +90,7 @@ public class CreateRestaurantUseCase {
         }
 
         CreateRestaurantOutput out = new CreateRestaurantOutput(
-                saved.getId(), saved.getName(), addressOutput, saved.getKitchenType().getAcronym(), saved.getStartOperationTime(), saved.getEndOperationTime(), proprietaryOutput
+                saved.getId(), saved.getName(), addressOutput, saved.getKitchenType(), saved.getStartOperationTime(), saved.getEndOperationTime(), proprietaryOutput
         );
 
 

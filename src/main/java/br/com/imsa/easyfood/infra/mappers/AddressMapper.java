@@ -2,13 +2,12 @@ package br.com.imsa.easyfood.infra.mappers;
 
 import br.com.imsa.easyfood.domain.entity.Address;
 import br.com.imsa.easyfood.infra.model.AddressJpaEntity;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
-public interface AddressMapper {
+@Component
+public class AddressMapper {
 
-    default AddressJpaEntity toEntity(Address address) {
+    public AddressJpaEntity toEntity(Address address) {
         if (address == null) return null;
         AddressJpaEntity entity = new AddressJpaEntity();
         entity.setId(address.getId());
@@ -20,7 +19,7 @@ public interface AddressMapper {
         return entity;
     }
 
-    default Address toDomain(AddressJpaEntity entity) {
+    public Address toDomain(AddressJpaEntity entity) {
         if (entity == null) return null;
         return new Address(
                 entity.getId(),
@@ -32,7 +31,7 @@ public interface AddressMapper {
         );
     }
 
-    default void update(@MappingTarget AddressJpaEntity target, Address request) {
+    public void update(AddressJpaEntity target, Address request) {
         if (target == null || request == null) return;
         target.setStreet(request.getStreet());
         target.setNeighborhood(request.getNeighborhood());

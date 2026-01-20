@@ -1,6 +1,5 @@
 package br.com.imsa.easyfood.application.v1.dto.requests;
 
-import br.com.imsa.easyfood.domain.enums.UserTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -30,7 +29,7 @@ public class UserSystemUpdateRequest {
     @NotNull(message = "{validation.user.type.required}")
     private String email;
 
-    @Schema(description = "Type of user", example = "CLIENT")
+    @Schema(description = "Type of user")
     @NotNull(message = "{validation.user.type.required}")
     private Long userType;
 

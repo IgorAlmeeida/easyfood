@@ -1,26 +1,49 @@
 package br.com.imsa.easyfood.infra.mappers;
 
 import br.com.imsa.easyfood.domain.entity.UserSystem;
-import br.com.imsa.easyfood.domain.entity.UserType;
+import br.com.imsa.easyfood.infra.model.AddressJpaEntity;
 import br.com.imsa.easyfood.infra.model.UserSystemJpaEntity;
-import org.mapstruct.AfterMapping;
-import org.mapstruct.Context;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.factory.Mappers;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring", uses = {AddressMapper.class})
-public interface UserSystemMapper {
+@Component
+public class UserSystemMapper {
 
-    @Mapping(source = "address", target = "addressJpaEntity")
-    UserSystemJpaEntity toEntity(UserSystem domain, @Context PasswordEncoder passwordEncoder);
+    private final AddressMapper addressMapper;
+    private final UserTypeMapper userTypeMapper;
 
-    default UserSystem toDomain(UserSystemJpaEntity entity) {
+    public UserSystemMapper(AddressMapper addressMapper, UserTypeMapper userTypeMapper) {
+        this.addressMapper = addressMapper;
+        this.userTypeMapper = userTypeMapper;
+    }
+
+    public UserSystemJpaEntity toEntity(UserSystem domain, PasswordEncoder passwordEncoder) {
+        if (domain == null) return null;
+        UserSystemJpaEntity entity = new UserSystemJpaEntity();
+        entity.setId(domain.getId());
+        entity.setName(domain.getName());
+        entity.setEmail(domain.getEmail());
+        entity.setUsername(domain.getUsername());
+        entity.setActive(domain.isActive());
+        // user type
+        entity.setUserType(userTypeMapper.toEntity(domain.getUserType()));
+        // address
+        AddressJpaEntity addressEntity = addressMapper.toEntity(domain.getAddress());
+        entity.setAddressJpaEntity(addressEntity);
+        // password encoding logic
+        String pwd = domain.getPassword();
+        if (pwd != null && !pwd.isBlank()) {
+            if (isBCryptHash(pwd)) {
+                entity.setPassword(pwd);
+            } else if (passwordEncoder != null) {
+                entity.setPassword(passwordEncoder.encode(pwd));
+            }
+        }
+        return entity;
+    }
+
+    public UserSystem toDomain(UserSystemJpaEntity entity) {
         if (entity == null) return null;
-        AddressMapper addressMapper = Mappers.getMapper(AddressMapper.class);
-        UserTypeMapper userTypeMapper = Mappers.getMapper(UserTypeMapper.class);
         return new UserSystem(
                 entity.getId(),
                 entity.getName(),
@@ -33,19 +56,7 @@ public interface UserSystemMapper {
         );
     }
 
-    @AfterMapping
-    default void encodePassword(UserSystem domain, @MappingTarget UserSystemJpaEntity entity, @Context PasswordEncoder passwordEncoder) {
-        if (domain == null) return;
-        String pwd = domain.getPassword();
-        if (pwd == null || pwd.isBlank()) return;
-        if (isBCryptHash(pwd)) {
-            entity.setPassword(pwd);
-        } else if (passwordEncoder != null) {
-            entity.setPassword(passwordEncoder.encode(pwd));
-        }
-    }
-
-    default boolean isBCryptHash(String pwd) {
-        return pwd.startsWith("$2a$") || pwd.startsWith("$2b$") || pwd.startsWith("$2y$");
+    public boolean isBCryptHash(String pwd) {
+        return pwd != null && (pwd.startsWith("$2a$") || pwd.startsWith("$2b$") || pwd.startsWith("$2y$"));
     }
 }

@@ -16,7 +16,7 @@ public class RestaurantItem {
 
 
     public RestaurantItem(Long id, String description, Double price, String image, AvailabilityEnum availability, Restaurant restaurant) {
-        validate(description, price);
+        validate(description, price, availability);
         this.id = id;
         this.description = description;
         this.price = price;
@@ -27,7 +27,7 @@ public class RestaurantItem {
     }
 
     public RestaurantItem(String description, Double price, String image, AvailabilityEnum availability, Restaurant restaurant) {
-        validate(description, price);
+        validate(description, price, availability);
         this.description = description;
         this.price = price;
         this.image = image;
@@ -35,7 +35,7 @@ public class RestaurantItem {
         this.restaurant = restaurant;
     }
 
-    private void validate(String description, Double price) {
+    private void validate(String description, Double price, AvailabilityEnum availability) {
         if (description == null || description.isBlank()) {
             throw new NegocioException("A descrição do item é obrigatória.");
         }

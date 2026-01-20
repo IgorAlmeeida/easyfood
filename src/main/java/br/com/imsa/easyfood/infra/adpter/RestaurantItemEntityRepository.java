@@ -33,6 +33,16 @@ public class RestaurantItemEntityRepository implements RestaurantItemGateway {
     }
 
     @Override
+    public Page<RestaurantItem> findByRestaurantId(Long restaurantId, Pageable pageable) {
+        return repository.findByRestaurant_Id(restaurantId, pageable).map(mapper::toDomain);
+    }
+
+    @Override
+    public Page<RestaurantItem> findByRestaurantIdAndDescriptionContainingIgnoreCase(Long restaurantId, String description, Pageable pageable) {
+        return repository.findByRestaurant_IdAndDescriptionContainingIgnoreCase(restaurantId, description, pageable).map(mapper::toDomain);
+    }
+
+    @Override
     public RestaurantItem save(RestaurantItem item) {
         RestaurantItemJpaEntity entity = mapper.toEntity(item);
         RestaurantItemJpaEntity saved = repository.save(entity);

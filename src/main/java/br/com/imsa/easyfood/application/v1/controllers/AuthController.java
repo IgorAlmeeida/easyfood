@@ -12,6 +12,7 @@ import br.com.imsa.easyfood.infra.adpter.UserSystemEntityRepository;
 import br.com.imsa.easyfood.infra.mappers.UserSystemMapper;
 import br.com.imsa.easyfood.infra.provider.TokenProvider;
 import br.com.imsa.easyfood.infra.repository.UserSystemRepository;
+import br.com.imsa.easyfood.infra.repository.UserTypeRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -41,6 +42,7 @@ public class AuthController {
     private final UserSystemRepository userSystemRepository;
     private final UserSystemMapper userSystemMapper;
     private final PasswordEncoder passwordEncoder;
+    private final UserTypeRepository userTypeRepository;
 
 
     private AuthEntityRepository authGateway() {
@@ -48,7 +50,7 @@ public class AuthController {
     }
 
     private UserSystemEntityRepository userSystemGateway() {
-        return new UserSystemEntityRepository(userSystemRepository, userSystemMapper, passwordEncoder);
+        return new UserSystemEntityRepository(userSystemRepository,userTypeRepository, userSystemMapper, passwordEncoder);
     }
 
     @PostMapping("/login")

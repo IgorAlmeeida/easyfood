@@ -14,6 +14,10 @@ public interface RestaurantItemGateway {
 
     Page<RestaurantItem> findByDescriptionContainingIgnoreCase(String description, Pageable pageable);
 
+    Page<RestaurantItem> findByRestaurantId(Long restaurantId, Pageable pageable);
+
+    Page<RestaurantItem> findByRestaurantIdAndDescriptionContainingIgnoreCase(Long restaurantId, String description, Pageable pageable);
+
     RestaurantItem save(RestaurantItem item);
 
     void delete(RestaurantItem item);

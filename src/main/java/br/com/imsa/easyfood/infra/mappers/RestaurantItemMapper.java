@@ -3,14 +3,18 @@ package br.com.imsa.easyfood.infra.mappers;
 import br.com.imsa.easyfood.domain.entity.Restaurant;
 import br.com.imsa.easyfood.domain.entity.RestaurantItem;
 import br.com.imsa.easyfood.infra.model.RestaurantItemJpaEntity;
-import br.com.imsa.easyfood.infra.model.RestaurantJpaEntity;
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
-public interface RestaurantItemMapper {
+@Component
+public class RestaurantItemMapper {
 
-    default RestaurantItemJpaEntity toEntity(RestaurantItem domain) {
+    private final RestaurantMapper restaurantMapper;
+
+    public RestaurantItemMapper(RestaurantMapper restaurantMapper) {
+        this.restaurantMapper = restaurantMapper;
+    }
+
+    public RestaurantItemJpaEntity toEntity(RestaurantItem domain) {
         if (domain == null) return null;
         RestaurantItemJpaEntity entity = new RestaurantItemJpaEntity();
         entity.setId(domain.getId());
@@ -18,24 +22,19 @@ public interface RestaurantItemMapper {
         entity.setPrice(domain.getPrice());
         entity.setImage(domain.getImage());
         entity.setAvailability(domain.getAvailability());
-        // map restaurant (only id is required when creating)
+        // map restaurant with all relevant fields using RestaurantMapper
         if (domain.getRestaurant() != null) {
-            RestaurantJpaEntity r = new RestaurantJpaEntity();
-            r.setId(domain.getRestaurant().getId());
-            entity.setRestaurant(r);
+            entity.setRestaurant(restaurantMapper.toEntity(domain.getRestaurant()));
         }
         return entity;
     }
 
-    default RestaurantItem toDomain(RestaurantItemJpaEntity entity) {
+    public RestaurantItem toDomain(RestaurantItemJpaEntity entity) {
         if (entity == null) return null;
-        // map restaurant with only id to avoid deep mapping and extra dependencies
+        // map restaurant with all relevant fields using RestaurantMapper
         Restaurant restaurant = null;
         if (entity.getRestaurant() != null) {
-            restaurant = new Restaurant(
-                    entity.getRestaurant().getId(),
-                    null, null, null, null, null, null
-            );
+            restaurant = restaurantMapper.toDomain(entity.getRestaurant());
         }
         return new RestaurantItem(
                 entity.getId(),

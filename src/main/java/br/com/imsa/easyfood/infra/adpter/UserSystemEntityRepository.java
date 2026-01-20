@@ -1,10 +1,13 @@
 package br.com.imsa.easyfood.infra.adpter;
 
 import br.com.imsa.easyfood.domain.entity.UserSystem;
+import br.com.imsa.easyfood.domain.entity.UserType;
 import br.com.imsa.easyfood.domain.gateway.UserSystemGateway;
 import br.com.imsa.easyfood.infra.mappers.UserSystemMapper;
 import br.com.imsa.easyfood.infra.model.UserSystemJpaEntity;
+import br.com.imsa.easyfood.infra.model.UserTypeJpaEntity;
 import br.com.imsa.easyfood.infra.repository.UserSystemRepository;
+import br.com.imsa.easyfood.infra.repository.UserTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +21,7 @@ import java.util.Optional;
 public class UserSystemEntityRepository implements UserSystemGateway {
 
     private final UserSystemRepository repository;
+    private final UserTypeRepository userTypeRepository;
     private final UserSystemMapper mapper;
     private final PasswordEncoder passwordEncoder;
 
@@ -49,6 +53,9 @@ public class UserSystemEntityRepository implements UserSystemGateway {
     @Override
     public UserSystem save(UserSystem userSystem) {
         UserSystemJpaEntity entity = mapper.toEntity(userSystem, passwordEncoder);
+        UserTypeJpaEntity userTypeJpaEntity = userTypeRepository.findById(entity.getUserType().getId())
+                .orElse(null);
+        entity.setUserType(userTypeJpaEntity);
         UserSystemJpaEntity saved = repository.save(entity);
         return mapper.toDomain(saved);
     }

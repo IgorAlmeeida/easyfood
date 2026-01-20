@@ -30,7 +30,7 @@ public class RestaurantJpaEntity {
     @Column(name = "name")
     private String name;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "address_id")
     private AddressJpaEntity address;
 
@@ -43,7 +43,7 @@ public class RestaurantJpaEntity {
     @Column(name = "end_operation_time")
     private LocalDateTime endOperationTime;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "proprietary_id")
     private UserSystemJpaEntity proprietary;
 

@@ -26,6 +26,21 @@ public class SearchRestaurantItemUseCase {
         return restaurantItemGateway.findByDescriptionContainingIgnoreCase(description, pageable);
     }
 
+    public Page<RestaurantItem> execute(Pageable pageable, Long restaurantId, String description) {
+        boolean hasRestaurant = restaurantId != null;
+        boolean hasDescription = description != null && !description.isBlank();
+
+        if (hasRestaurant && hasDescription) {
+            return restaurantItemGateway.findByRestaurantIdAndDescriptionContainingIgnoreCase(restaurantId, description, pageable);
+        } else if (hasRestaurant) {
+            return restaurantItemGateway.findByRestaurantId(restaurantId, pageable);
+        } else if (hasDescription) {
+            return restaurantItemGateway.findByDescriptionContainingIgnoreCase(description, pageable);
+        } else {
+            return restaurantItemGateway.findAll(pageable);
+        }
+    }
+
     public Optional<RestaurantItem> findById(Long id) {
         return restaurantItemGateway.findById(id);
     }
