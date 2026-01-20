@@ -1,6 +1,5 @@
 package br.com.imsa.easyfood.domain.dto.output.address;
 
-import java.time.LocalDateTime;
 
 public record UpdateAddressOutput(
         Long id,
@@ -8,8 +7,6 @@ public record UpdateAddressOutput(
         String neighborhood,
         String city,
         String number,
-        String zipCode,
-        LocalDateTime createAt,
-        LocalDateTime updateAt
+        String zipCode
 ) {
 }

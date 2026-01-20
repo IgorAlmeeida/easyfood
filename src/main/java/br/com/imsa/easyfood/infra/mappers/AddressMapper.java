@@ -8,10 +8,36 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring")
 public interface AddressMapper {
 
-    AddressJpaEntity toEntity(Address address);
+    default AddressJpaEntity toEntity(Address address) {
+        if (address == null) return null;
+        AddressJpaEntity entity = new AddressJpaEntity();
+        entity.setId(address.getId());
+        entity.setStreet(address.getStreet());
+        entity.setNeighborhood(address.getNeighborhood());
+        entity.setCity(address.getCity());
+        entity.setNumber(address.getNumber());
+        entity.setZipCode(address.getZipCode());
+        return entity;
+    }
 
-    Address toDomain(AddressJpaEntity entity);
+    default Address toDomain(AddressJpaEntity entity) {
+        if (entity == null) return null;
+        return new Address(
+                entity.getId(),
+                entity.getStreet(),
+                entity.getNeighborhood(),
+                entity.getCity(),
+                entity.getNumber(),
+                entity.getZipCode()
+        );
+    }
 
-    void update(@MappingTarget AddressJpaEntity target, Address request);
-
+    default void update(@MappingTarget AddressJpaEntity target, Address request) {
+        if (target == null || request == null) return;
+        target.setStreet(request.getStreet());
+        target.setNeighborhood(request.getNeighborhood());
+        target.setCity(request.getCity());
+        target.setNumber(request.getNumber());
+        target.setZipCode(request.getZipCode());
+    }
 }

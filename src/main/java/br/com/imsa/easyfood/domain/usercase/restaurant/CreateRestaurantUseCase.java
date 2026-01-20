@@ -4,6 +4,7 @@ import br.com.imsa.easyfood.domain.dto.output.address.CreateAddressOutput;
 import br.com.imsa.easyfood.domain.dto.output.restaurant.CreateRestaurantOutput;
 import br.com.imsa.easyfood.domain.dto.output.usersystem.CreateUserSystemOutput;
 import br.com.imsa.easyfood.domain.dto.input.restaurant.CreateRestaurantInput;
+import br.com.imsa.easyfood.domain.dto.output.usertype.CreateUserTypeOutput;
 import br.com.imsa.easyfood.domain.entity.Address;
 import br.com.imsa.easyfood.domain.entity.Restaurant;
 import br.com.imsa.easyfood.domain.entity.UserSystem;
@@ -24,50 +25,75 @@ public class CreateRestaurantUseCase {
     private final UserSystemGateway userSystemGateway;
 
     public Optional<CreateRestaurantOutput> execute(CreateRestaurantInput input) {
-        if (input == null) return Optional.empty();
-
-        Restaurant r = new Restaurant();
-        r.setName(input.name());
-        r.setKitchenType(input.kitchenType());
-        r.setStartOperationTime(input.startOperationTime());
-        r.setEndOperationTime(input.endOperationTime());
-
-        if (input.addressId() != null) {
-            addressGateway.findById(input.addressId()).ifPresent(r::setAddress);
+        if (input == null){
+            return Optional.empty();
         }
+
+        Address addr = null;
+        if (input.address() != null) {
+            addr = new Address(
+                    input.address().street(),
+                    input.address().neighborhood(),
+                    input.address().city(),
+                    input.address().number(),
+                    input.address().zipCode()
+            );
+        }
+        UserSystem proprietary = null;
         if (input.proprietaryId() != null) {
-            userSystemGateway.findById(input.proprietaryId()).ifPresent(r::setProprietary);
+            proprietary = userSystemGateway.findById(input.proprietaryId()).orElse(null);
         }
+
+        Restaurant r = new Restaurant(
+                input.name(),
+                addr,
+                input.kitchenType(),
+                input.startOperationTime(),
+                input.endOperationTime(),
+                proprietary
+        );
 
         Restaurant saved = restaurantGateway.save(r);
-        if (saved == null) return Optional.empty();
+        if (saved == null) {
+            return Optional.empty();
+        }
 
         CreateAddressOutput addressOutput = null;
         Address a = saved.getAddress();
         if (a != null) {
             addressOutput = new CreateAddressOutput(
-                    a.getId(), a.getStreet(), a.getNeighborhood(), a.getCity(), a.getNumber(), a.getZipCode(), a.getCreateAt(), a.getUpdateAt()
+                    a.getId(), a.getStreet(), a.getNeighborhood(), a.getCity(), a.getNumber(), a.getZipCode()
             );
         }
 
         CreateUserSystemOutput proprietaryOutput = null;
         UserSystem u = saved.getProprietary();
+
         if (u != null) {
             CreateAddressOutput userAddressOutput = null;
             Address ua = u.getAddress();
+
             if (ua != null) {
                 userAddressOutput = new CreateAddressOutput(
-                        ua.getId(), ua.getStreet(), ua.getNeighborhood(), ua.getCity(), ua.getNumber(), ua.getZipCode(), ua.getCreateAt(), ua.getUpdateAt()
+                        ua.getId(), ua.getStreet(), ua.getNeighborhood(), ua.getCity(), ua.getNumber(), ua.getZipCode()
                 );
             }
+
+            CreateUserTypeOutput createUserTypeOutput = new CreateUserTypeOutput(
+                    u.getUserType().getId(),
+                    u.getUserType().getName()
+            );
+
             proprietaryOutput = new CreateUserSystemOutput(
-                    u.getId(), u.getUsername(), u.getName(), u.getEmail(), u.getUserType(), u.isActive(), userAddressOutput
+                    u.getId(), u.getUsername(), u.getName(), u.getEmail(), createUserTypeOutput, u.isActive(), userAddressOutput
             );
         }
 
         CreateRestaurantOutput out = new CreateRestaurantOutput(
-                saved.getId(), saved.getName(), addressOutput, saved.getKitchenType(), saved.getStartOperationTime(), saved.getEndOperationTime(), proprietaryOutput
+                saved.getId(), saved.getName(), addressOutput, saved.getKitchenType().getAcronym(), saved.getStartOperationTime(), saved.getEndOperationTime(), proprietaryOutput
         );
+
+
         return Optional.of(out);
     }
 }

@@ -4,10 +4,14 @@ import br.com.imsa.easyfood.domain.dto.input.address.CreateAddressInput;
 import br.com.imsa.easyfood.domain.dto.input.usersystem.CreateUserSystemInput;
 import br.com.imsa.easyfood.domain.dto.output.address.CreateAddressOutput;
 import br.com.imsa.easyfood.domain.dto.output.usersystem.CreateUserSystemOutput;
+import br.com.imsa.easyfood.domain.dto.output.usertype.CreateUserTypeOutput;
 import br.com.imsa.easyfood.domain.entity.Address;
 import br.com.imsa.easyfood.domain.entity.UserSystem;
+import br.com.imsa.easyfood.domain.entity.UserType;
+import br.com.imsa.easyfood.domain.exception.NegocioException;
 import br.com.imsa.easyfood.domain.gateway.AddressGateway;
 import br.com.imsa.easyfood.domain.gateway.UserSystemGateway;
+import br.com.imsa.easyfood.domain.gateway.UserTypeGateway;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,54 +22,58 @@ public class CreateUserSystemUseCase {
 
     private final UserSystemGateway userSystemGateway;
     private final AddressGateway addressGateway;
+    private final UserTypeGateway userTypeGateway;
 
     @Transactional
     public CreateUserSystemOutput execute(CreateUserSystemInput input) {
-        // Create and persist Address if provided
-        Address savedAddress = null;
+        Address addr = null;
+        if (input.address() != null) {
+            addr = new Address(
+                    input.address().street(),
+                    input.address().neighborhood(),
+                    input.address().city(),
+                    input.address().number(),
+                    input.address().zipCode()
+            );
+        }
 
-        UserSystem user = new UserSystem();
-        user.setUsername(input.username());
-        user.setName(input.name());
-        user.setEmail(input.email());
-        user.setUserType(input.userType());
-        user.setActive(true);
-        user.setPassword(input.password());
+        UserType userType = userTypeGateway.findById(input.userType())
+                .orElseThrow(() -> new NegocioException("Tipo de usuário não encontrado."));
 
-        CreateAddressInput addrInput = input.address();
-        Address addr = new Address();
-        addr.setStreet(addrInput.street());
-        addr.setNeighborhood(addrInput.neighborhood());
-        addr.setCity(addrInput.city());
-        addr.setNumber(addrInput.number());
-        addr.setZipCode(addrInput.zipCode());
-
-        user.setAddress(addr);
-
+        UserSystem user = new UserSystem(
+                null,
+                input.name(),
+                input.email(),
+                input.username(),
+                input.password(),
+                true,
+                userType,
+                addr
+        );
 
         UserSystem savedUser = userSystemGateway.save(user);
 
-        CreateAddressOutput addressOutput = null;
-        if (savedUser.getAddress() != null) {
-            Address a = savedUser.getAddress();
-            addressOutput = new CreateAddressOutput(
-                    a.getId(),
-                    a.getStreet(),
-                    a.getNeighborhood(),
-                    a.getCity(),
-                    a.getNumber(),
-                    a.getZipCode(),
-                    a.getCreateAt(),
-                    a.getUpdateAt()
-            );
-        }
+        Address a = savedUser.getAddress();
+        CreateAddressOutput addressOutput = new CreateAddressOutput(
+                a.getId(),
+                a.getStreet(),
+                a.getNeighborhood(),
+                a.getCity(),
+                a.getNumber(),
+                a.getZipCode()
+        );
+
+        CreateUserTypeOutput userTypeOutput = new CreateUserTypeOutput(
+                savedUser.getUserType().getId(),
+                savedUser.getUserType().getName()
+        );
 
         return new CreateUserSystemOutput(
                 savedUser.getId(),
                 savedUser.getUsername(),
                 savedUser.getName(),
                 savedUser.getEmail(),
-                savedUser.getUserType(),
+                userTypeOutput,
                 savedUser.isActive(),
                 addressOutput
         );

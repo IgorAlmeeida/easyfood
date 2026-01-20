@@ -2,10 +2,16 @@ package br.com.imsa.easyfood.domain.usercase.usersystem;
 
 import br.com.imsa.easyfood.domain.dto.input.address.UpdateAddressInput;
 import br.com.imsa.easyfood.domain.dto.input.usersystem.UpdateUserSystemInput;
+import br.com.imsa.easyfood.domain.dto.output.address.UpdateAddressOutput;
+import br.com.imsa.easyfood.domain.dto.output.usersystem.UpdateUserSystemOutput;
+import br.com.imsa.easyfood.domain.dto.output.usertype.UpdateUserTypeOutput;
 import br.com.imsa.easyfood.domain.entity.Address;
 import br.com.imsa.easyfood.domain.entity.UserSystem;
+import br.com.imsa.easyfood.domain.entity.UserType;
+import br.com.imsa.easyfood.domain.exception.NegocioException;
 import br.com.imsa.easyfood.domain.gateway.AddressGateway;
 import br.com.imsa.easyfood.domain.gateway.UserSystemGateway;
+import br.com.imsa.easyfood.domain.gateway.UserTypeGateway;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -17,42 +23,73 @@ public class UpdateUserSystemUseCase {
 
     private final UserSystemGateway userSystemGateway;
     private final AddressGateway addressGateway;
+    private final UserTypeGateway userTypeGateway;
 
-    public Optional<UserSystem> execute(UpdateUserSystemInput input) {
-        if (input == null || input.id() == null) return Optional.empty();
-
-        Optional<UserSystem> opt = userSystemGateway.findById(input.id());
-        if (opt.isEmpty()) return Optional.empty();
-
-        UserSystem user = opt.get();
-        if (input.username() != null) user.setUsername(input.username());
-        if (input.name() != null) user.setName(input.name());
-        if (input.email() != null) user.setEmail(input.email());
-        if (input.userType() != null) user.setUserType(input.userType());
-        if (input.active() != null) user.setActive(input.active());
-
-        UpdateAddressInput addrInput = input.address();
-        if (addrInput != null) {
-            Address addr = user.getAddress();
-            if (addr == null) {
-                addr = new Address();
-                user.setAddress(addr);
-            }
-            if (addrInput.street() != null) addr.setStreet(addrInput.street());
-            if (addrInput.neighborhood() != null) addr.setNeighborhood(addrInput.neighborhood());
-            if (addrInput.city() != null) addr.setCity(addrInput.city());
-            if (addrInput.number() != null) addr.setNumber(addrInput.number());
-            if (addrInput.zipCode() != null) addr.setZipCode(addrInput.zipCode());
-
-            if (addrInput.id() != null) {
-                addressGateway.update(addrInput.id(), addr);
-            } else {
-                Address saved = addressGateway.save(addr);
-                user.setAddress(saved);
-            }
+    public Optional<UpdateUserSystemOutput> execute(UpdateUserSystemInput input) {
+        if (input == null || input.id() == null) {
+            return Optional.empty();
         }
 
-        UserSystem saved = userSystemGateway.save(user);
-        return Optional.ofNullable(saved);
+        Optional<UserSystem> opt = userSystemGateway.findById(input.id());
+        if (opt.isEmpty()){
+            return Optional.empty();
+        }
+
+        UserSystem current = opt.get();
+
+        // Merge address
+        UpdateAddressInput addrInput = input.address();
+        Address address = new Address(addrInput.id(), addrInput.street(), addrInput.neighborhood(), addrInput.city(), addrInput.number(), addrInput.zipCode() );
+
+        UserType userType = userTypeGateway.findById(input.userType())
+                .orElseThrow(() -> new NegocioException("Tipo de usuário não encontrado."));
+
+        // Rebuild UserSystem with merged fields
+        UserSystem mergedUser = new UserSystem(
+                current.getId(),
+                input.name(),
+                input.email(),
+                input.username(),
+                current.getPassword(),
+                input.active(),
+                userType,
+                address
+        );
+
+        UserSystem saved = userSystemGateway.save(mergedUser);
+
+        if (saved == null) {
+            return Optional.empty();
+        }
+
+        UpdateAddressOutput addressOutput = null;
+
+        if (saved.getAddress() != null) {
+            Address a = saved.getAddress();
+            addressOutput = new UpdateAddressOutput(
+                    a.getId(),
+                    a.getStreet(),
+                    a.getNeighborhood(),
+                    a.getCity(),
+                    a.getNumber(),
+                    a.getZipCode()
+            );
+        }
+
+        UpdateUserTypeOutput  userTypeOutput = new UpdateUserTypeOutput(
+                userType.getId(),
+                userType.getName()
+        );
+
+        UpdateUserSystemOutput output = new UpdateUserSystemOutput(
+                saved.getId(),
+                saved.getUsername(),
+                saved.getName(),
+                saved.getEmail(),
+                userTypeOutput,
+                saved.isActive(),
+                addressOutput
+        );
+        return Optional.of(output);
     }
 }

@@ -6,6 +6,7 @@ import br.com.imsa.easyfood.application.v1.dto.responses.UserSystemResponse;
 import br.com.imsa.easyfood.domain.dto.input.usersystem.CreateUserSystemInput;
 import br.com.imsa.easyfood.domain.dto.input.usersystem.UpdateUserSystemInput;
 import br.com.imsa.easyfood.domain.dto.output.usersystem.CreateUserSystemOutput;
+import br.com.imsa.easyfood.domain.dto.output.usersystem.UpdateUserSystemOutput;
 import br.com.imsa.easyfood.domain.entity.UserSystem;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -17,6 +18,9 @@ public interface UserSystemMapperApp {
 
     // Map a domain UserSystem directly to API response
     UserSystemResponse toUserSystemResponse(UserSystem userSystem);
+
+    // Map update output to API response
+    UserSystemResponse toUserSystemResponse(UpdateUserSystemOutput userSystem);
 
     CreateUserSystemInput  toCreateUserSystemInput(UserSystemCreateRequest userSystem);
 

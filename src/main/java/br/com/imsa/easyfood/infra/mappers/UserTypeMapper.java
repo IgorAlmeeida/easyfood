@@ -9,5 +9,8 @@ public interface UserTypeMapper {
 
     UserTypeJpaEntity toEntity(UserType domain);
 
-    UserType toDomain(UserTypeJpaEntity entity);
+    default UserType toDomain(UserTypeJpaEntity entity) {
+        if (entity == null) return null;
+        return new UserType(entity.getId(), entity.getName());
+    }
 }

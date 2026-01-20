@@ -1,5 +1,6 @@
 package br.com.imsa.easyfood.application.v1.dto.requests;
 
+import br.com.imsa.easyfood.domain.enums.KichenTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -20,11 +21,12 @@ public class RestaurantCreateRequest {
     @NotBlank
     private String name;
 
-    @Schema(description = "Address identifier to associate", example = "1")
-    private Long addressId;
+    @Schema(description = "Address Restaurant")
+    @NotNull(message = "{validation.user.address.required}")
+    private AddressRequest address;
 
-    @NotBlank
-    private String kitchenType;
+    @NotNull
+    private KichenTypeEnum kitchenType;
 
     @NotNull
     private LocalDateTime startOperationTime;

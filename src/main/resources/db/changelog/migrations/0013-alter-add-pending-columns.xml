@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        logicalFilePath="db/changelog/0013-alter-add-pending-columns.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="0013-alter-add-pending-columns" author="system">
+        <comment>Adiciona colunas pendentes para alinhar o esquema com as entidades JPA</comment>
+
+        <!-- 1) Adiciona coluna user_type_id em easyfood.user_system e respectiva coluna na tabela de auditoria -->
+        <addColumn tableName="user_system" schemaName="easyfood">
+            <column name="user_type_id" type="BIGINT"/>
+        </addColumn>
+        <addColumn tableName="user_system_audit" schemaName="audit_easyfood">
+            <column name="user_type_id" type="BIGINT"/>
+        </addColumn>
+
+        <!-- Cria FK de user_system.user_type_id -> user_type.id -->
+        <addForeignKeyConstraint
+                baseTableSchemaName="easyfood"
+                baseTableName="user_system"
+                baseColumnNames="user_type_id"
+                referencedTableSchemaName="easyfood"
+                referencedTableName="user_type"
+                referencedColumnNames="id"
+                constraintName="fk_user_system_user_type"/>
+
+        <!-- 2) Adiciona coluna restaurant_id em easyfood.restaurant_item e respectiva coluna na tabela de auditoria -->
+        <addColumn tableName="restaurant_item" schemaName="easyfood">
+            <column name="restaurant_id" type="BIGINT"/>
+        </addColumn>
+        <addColumn tableName="restaurant_item_audit" schemaName="audit_easyfood">
+            <column name="restaurant_id" type="BIGINT"/>
+        </addColumn>
+
+        <!-- Cria FK de restaurant_item.restaurant_id -> restaurant.id -->
+        <addForeignKeyConstraint
+                baseTableSchemaName="easyfood"
+                baseTableName="restaurant_item"
+                baseColumnNames="restaurant_id"
+                referencedTableSchemaName="easyfood"
+                referencedTableName="restaurant"
+                referencedColumnNames="id"
+                constraintName="fk_restaurant_item_restaurant"/>
+    </changeSet>
+
+</databaseChangeLog>

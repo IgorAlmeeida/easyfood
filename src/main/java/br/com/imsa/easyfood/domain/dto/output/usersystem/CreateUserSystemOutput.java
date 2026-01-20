@@ -1,14 +1,15 @@
 package br.com.imsa.easyfood.domain.dto.output.usersystem;
 
 import br.com.imsa.easyfood.domain.dto.output.address.CreateAddressOutput;
-import br.com.imsa.easyfood.infra.enums.UserTypeEnum;
+import br.com.imsa.easyfood.domain.dto.output.usertype.CreateUserTypeOutput;
+import br.com.imsa.easyfood.domain.enums.UserTypeEnum;
 
 public record CreateUserSystemOutput(
         Long id,
         String username,
         String name,
         String email,
-        UserTypeEnum userType,
+        CreateUserTypeOutput userType,
         boolean active,
         CreateAddressOutput address
 ) {

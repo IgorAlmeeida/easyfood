@@ -8,6 +8,7 @@ import br.com.imsa.easyfood.infra.repository.UserSystemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -18,6 +19,7 @@ public class UserSystemEntityRepository implements UserSystemGateway {
 
     private final UserSystemRepository repository;
     private final UserSystemMapper mapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public Optional<UserSystem> findById(Long id) {
@@ -46,18 +48,13 @@ public class UserSystemEntityRepository implements UserSystemGateway {
 
     @Override
     public UserSystem save(UserSystem userSystem) {
-        UserSystemJpaEntity entity = mapper.toEntity(userSystem);
+        UserSystemJpaEntity entity = mapper.toEntity(userSystem, passwordEncoder);
         UserSystemJpaEntity saved = repository.save(entity);
         return mapper.toDomain(saved);
     }
 
     @Override
     public void delete(UserSystem userSystem) {
-        if (userSystem.getId() != null) {
-            repository.deleteById(userSystem.getId());
-        } else {
-            UserSystemJpaEntity entity = mapper.toEntity(userSystem);
-            repository.delete(entity);
-        }
+        repository.deleteById(userSystem.getId());
     }
 }

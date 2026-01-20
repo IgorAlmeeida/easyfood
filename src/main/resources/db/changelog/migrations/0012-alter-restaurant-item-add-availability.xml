@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        logicalFilePath="db/changelog/0012-alter-restaurant-item-add-availability.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="0012-alter-restaurant-item-add-availability" author="system">
+        <comment>Adiciona coluna availability às tabelas easyfood.restaurant_item e audit_easyfood.restaurant_item_audit</comment>
+
+        <!-- Add availability column to main table -->
+        <addColumn tableName="restaurant_item" schemaName="easyfood">
+            <column name="availability" type="VARCHAR(1)"/>
+        </addColumn>
+
+        <!-- Add availability column to audit table (to keep audit schema in sync) -->
+        <addColumn tableName="restaurant_item_audit" schemaName="audit_easyfood">
+            <column name="availability" type="VARCHAR(1)"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

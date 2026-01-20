@@ -1,6 +1,7 @@
 package br.com.imsa.easyfood.infra.model;
 
 
+import br.com.imsa.easyfood.domain.enums.AvailabilityEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,8 +31,13 @@ public class RestaurantItemJpaEntity {
     @Column(name = "price")
     private Double price;
 
-    //falta enum type Diponibildiade
+    @Column(name = "availability")
+    private AvailabilityEnum availability;
 
     @Column(name = "image_location")
     private String image;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "restaurant_id")
+    private RestaurantJpaEntity restaurant;
 }

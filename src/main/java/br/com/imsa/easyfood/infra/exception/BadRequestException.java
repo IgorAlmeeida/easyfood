@@ -1,4 +1,4 @@
-package br.com.imsa.easyfood.exception;
+package br.com.imsa.easyfood.infra.exception;
 
 /**
  * Exception thrown when a client sends an invalid request that cannot be processed.

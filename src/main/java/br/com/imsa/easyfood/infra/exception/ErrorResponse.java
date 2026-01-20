@@ -1,4 +1,4 @@
-package br.com.imsa.easyfood.exception;
+package br.com.imsa.easyfood.infra.exception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;

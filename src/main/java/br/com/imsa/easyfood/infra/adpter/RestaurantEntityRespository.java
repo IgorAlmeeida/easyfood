@@ -41,11 +41,6 @@ public class RestaurantEntityRespository implements RestaurantGateway {
 
     @Override
     public void delete(Restaurant restaurant) {
-        if (restaurant.getId() != null) {
-            repository.deleteById(restaurant.getId());
-        } else {
-            RestaurantJpaEntity entity = mapper.toEntity(restaurant);
-            repository.delete(entity);
-        }
+        repository.deleteById(restaurant.getId());
     }
 }

@@ -2,9 +2,12 @@ package br.com.imsa.easyfood.domain.usercase.address;
 
 import br.com.imsa.easyfood.domain.dto.input.address.UpdateAddressInput;
 import br.com.imsa.easyfood.domain.entity.Address;
+import br.com.imsa.easyfood.domain.exception.NegocioException;
 import br.com.imsa.easyfood.domain.gateway.AddressGateway;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Optional;
 
 @Getter
 @RequiredArgsConstructor
@@ -12,14 +15,20 @@ public class UpdateAddressUserCase {
 
     private final AddressGateway addressGateway;
 
-    public void execute (UpdateAddressInput updateAddressInput) {
-        Address address = new Address();
-        if (updateAddressInput.street() != null) address.setStreet(updateAddressInput.street());
-        if (updateAddressInput.neighborhood() != null) address.setNeighborhood(updateAddressInput.neighborhood());
-        if (updateAddressInput.city() != null) address.setCity(updateAddressInput.city());
-        if (updateAddressInput.number() != null) address.setNumber(updateAddressInput.number());
-        if (updateAddressInput.zipCode() != null) address.setZipCode(updateAddressInput.zipCode());
+    public Optional<Address> execute(UpdateAddressInput updateAddressInput) {
+        if (updateAddressInput == null || updateAddressInput.id() == null) {
+            return Optional.empty();
+        }
 
-        addressGateway.update(address.getId(), address);
+        Optional<Address> currentOpt = addressGateway.findById(updateAddressInput.id());
+        if (currentOpt.isEmpty()){
+            throw new NegocioException("Endereço não encontrado.");
+        }
+
+        Address merged = new Address(updateAddressInput.street(), updateAddressInput.neighborhood(),
+                updateAddressInput.city(), updateAddressInput.number(), updateAddressInput.zipCode() );
+        Address updated = addressGateway.update(updateAddressInput.id(), merged);
+
+        return Optional.ofNullable(updated);
     }
 }

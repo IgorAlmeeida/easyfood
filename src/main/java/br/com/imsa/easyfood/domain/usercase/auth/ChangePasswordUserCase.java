@@ -13,13 +13,31 @@ public class ChangePasswordUserCase {
 
     public final UserSystemGateway userSystemGateway;
 
-    public boolean execute(Long userId, String oldPassword, String newPassword) {
+    public boolean execute(Long userId,
+                           String oldPassword,
+                           String newPassword) {
+
         Optional<UserSystem> opt = userSystemGateway.findById(userId);
-        if (opt.isEmpty()) return false;
+        if (opt.isEmpty()){
+            return false;
+        }
+
+        //Todo adicionar matcher senha antiga com a senha atual
         UserSystem user = opt.get();
-        // Minimal change: set new password; validation/encoding can be handled at gateway or repository level
-        user.setPassword(newPassword);
-        userSystemGateway.save(user);
+
+        UserSystem updated = new UserSystem(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getUsername(),
+                newPassword,
+                user.isActive(),
+                user.getUserType(),
+                user.getAddress()
+        );
+
+        userSystemGateway.save(updated);
+
         return true;
     }
 }

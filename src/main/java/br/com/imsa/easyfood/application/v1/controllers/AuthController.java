@@ -6,7 +6,7 @@ import br.com.imsa.easyfood.application.v1.dto.responses.LoginResponse;
 import br.com.imsa.easyfood.domain.dto.output.auth.LoginOutput;
 import br.com.imsa.easyfood.domain.usercase.auth.ChangePasswordUserCase;
 import br.com.imsa.easyfood.domain.usercase.auth.LoginUserCase;
-import br.com.imsa.easyfood.exception.ErrorResponse;
+import br.com.imsa.easyfood.infra.exception.ErrorResponse;
 import br.com.imsa.easyfood.infra.adpter.AuthEntityRepository;
 import br.com.imsa.easyfood.infra.adpter.UserSystemEntityRepository;
 import br.com.imsa.easyfood.infra.mappers.UserSystemMapper;
@@ -20,13 +20,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -40,6 +40,7 @@ public class AuthController {
     private final TokenProvider tokenProvider;
     private final UserSystemRepository userSystemRepository;
     private final UserSystemMapper userSystemMapper;
+    private final PasswordEncoder passwordEncoder;
 
 
     private AuthEntityRepository authGateway() {
@@ -47,7 +48,7 @@ public class AuthController {
     }
 
     private UserSystemEntityRepository userSystemGateway() {
-        return new UserSystemEntityRepository(userSystemRepository, userSystemMapper);
+        return new UserSystemEntityRepository(userSystemRepository, userSystemMapper, passwordEncoder);
     }
 
     @PostMapping("/login")

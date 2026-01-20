@@ -41,11 +41,6 @@ public class UserTypeEntityRepository implements UserTypeGateway {
 
     @Override
     public void delete(UserType userType) {
-        if (userType.getId() != null) {
-            repository.deleteById(userType.getId());
-        } else {
-            UserTypeJpaEntity entity = mapper.toEntity(userType);
-            repository.delete(entity);
-        }
+        repository.deleteById(userType.getId());
     }
 }

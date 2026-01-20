@@ -1,5 +1,6 @@
 package br.com.imsa.easyfood.infra.converter;
 
+import br.com.imsa.easyfood.domain.enums.AvailabilityEnum;
 import br.com.imsa.easyfood.domain.enums.UserTypeEnum;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
@@ -7,10 +8,10 @@ import jakarta.persistence.Converter;
 import java.util.Objects;
 
 @Converter(autoApply = true)
-public class UserTypeConverter implements AttributeConverter<UserTypeEnum, String> {
+public class AvailabilityConverter implements AttributeConverter<AvailabilityEnum, String> {
 
     @Override
-    public String convertToDatabaseColumn(UserTypeEnum u) {
+    public String convertToDatabaseColumn(AvailabilityEnum u) {
         if (Objects.isNull(u)) {
             return null;
         }
@@ -18,7 +19,7 @@ public class UserTypeConverter implements AttributeConverter<UserTypeEnum, Strin
     }
 
     @Override
-    public UserTypeEnum convertToEntityAttribute(String acronym) {
-        return UserTypeEnum.getByAcronym(acronym);
+    public AvailabilityEnum convertToEntityAttribute(String acronym) {
+        return AvailabilityEnum.getByAcronym(acronym);
     }
 }

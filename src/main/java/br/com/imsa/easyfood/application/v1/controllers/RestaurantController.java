@@ -1,20 +1,22 @@
 package br.com.imsa.easyfood.application.v1.controllers;
 
 import br.com.imsa.easyfood.application.v1.dto.PageableDto;
+import br.com.imsa.easyfood.application.v1.dto.requests.AddressRequest;
 import br.com.imsa.easyfood.application.v1.dto.requests.RestaurantCreateRequest;
 import br.com.imsa.easyfood.application.v1.dto.requests.RestaurantUpdateRequest;
 import br.com.imsa.easyfood.application.v1.dto.responses.PageResponse;
 import br.com.imsa.easyfood.application.v1.dto.responses.RestaurantResponse;
 import br.com.imsa.easyfood.application.v1.mappers.RestaurantMapperApp;
+import br.com.imsa.easyfood.domain.dto.input.address.CreateAddressInput;
+import br.com.imsa.easyfood.domain.dto.input.address.UpdateAddressInput;
 import br.com.imsa.easyfood.domain.dto.input.restaurant.CreateRestaurantInput;
 import br.com.imsa.easyfood.domain.dto.input.restaurant.UpdateRestaurantInput;
-import br.com.imsa.easyfood.domain.dto.output.restaurant.CreateRestaurantOutput;
 import br.com.imsa.easyfood.domain.entity.Restaurant;
 import br.com.imsa.easyfood.domain.usercase.restaurant.CreateRestaurantUseCase;
 import br.com.imsa.easyfood.domain.usercase.restaurant.DeleteRestaurantUseCase;
 import br.com.imsa.easyfood.domain.usercase.restaurant.SearchRestaurantUseCase;
 import br.com.imsa.easyfood.domain.usercase.restaurant.UpdateRestaurantUseCase;
-import br.com.imsa.easyfood.exception.ErrorResponse;
+import br.com.imsa.easyfood.infra.exception.ErrorResponse;
 import br.com.imsa.easyfood.infra.adpter.AddressEntityRepository;
 import br.com.imsa.easyfood.infra.adpter.RestaurantEntityRespository;
 import br.com.imsa.easyfood.infra.adpter.UserSystemEntityRepository;
@@ -40,6 +42,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -57,6 +60,7 @@ public class RestaurantController {
     private final UserSystemMapper userSystemMapper; // infra mapper for gateways
 
     private final RestaurantMapperApp restaurantMapperApp; // app-level mapper for API
+    private final PasswordEncoder passwordEncoder;
 
     private RestaurantEntityRespository restaurantGateway() {
         return new RestaurantEntityRespository(restaurantRepository, restaurantMapper);
@@ -67,7 +71,7 @@ public class RestaurantController {
     }
 
     private UserSystemEntityRepository userSystemGateway() {
-        return new UserSystemEntityRepository(userSystemRepository, userSystemMapper);
+        return new UserSystemEntityRepository(userSystemRepository, userSystemMapper, passwordEncoder);
     }
 
     @PostMapping
@@ -80,12 +84,13 @@ public class RestaurantController {
     public ResponseEntity<RestaurantResponse> createRestaurant(@Valid @RequestBody RestaurantCreateRequest req) {
         CreateRestaurantInput input = new CreateRestaurantInput(
                 req.getName(),
-                req.getAddressId(),
+                toCreateAddressInput(req.getAddress()),
                 req.getKitchenType(),
                 req.getStartOperationTime(),
                 req.getEndOperationTime(),
                 req.getProprietaryId()
         );
+
         CreateRestaurantUseCase useCase = new CreateRestaurantUseCase(restaurantGateway(), addressGateway(), userSystemGateway());
         return useCase.execute(input)
                 .map(restaurantMapperApp::toRestaurantResponse)
@@ -133,7 +138,7 @@ public class RestaurantController {
         UpdateRestaurantInput input = new UpdateRestaurantInput(
                 id,
                 req.getName(),
-                req.getAddressId(),
+                toUpdateAddressInput(req.getAddress()),
                 req.getKitchenType(),
                 req.getStartOperationTime(),
                 req.getEndOperationTime(),
@@ -156,5 +161,16 @@ public class RestaurantController {
         DeleteRestaurantUseCase useCase = new DeleteRestaurantUseCase(restaurantGateway());
         boolean deleted = useCase.execute(id);
         return new ResponseEntity<>(deleted ? HttpStatus.NO_CONTENT : HttpStatus.NOT_FOUND);
+    }
+
+
+    private CreateAddressInput toCreateAddressInput(AddressRequest req) {
+        if (req == null) return null;
+        return new CreateAddressInput(req.getStreet(), req.getNeighborhood(), req.getCity(), req.getNumber(), req.getZipCode());
+    }
+
+    private UpdateAddressInput toUpdateAddressInput(AddressRequest req) {
+        if (req == null) return null;
+        return new UpdateAddressInput(null, req.getStreet(), req.getNeighborhood(), req.getCity(), req.getNumber(), req.getZipCode());
     }
 }

@@ -1,9 +1,12 @@
 package br.com.imsa.easyfood.domain.usercase.restaurant;
 
+import br.com.imsa.easyfood.domain.dto.input.address.UpdateAddressInput;
 import br.com.imsa.easyfood.domain.dto.input.restaurant.UpdateRestaurantInput;
 import br.com.imsa.easyfood.domain.entity.Address;
 import br.com.imsa.easyfood.domain.entity.Restaurant;
 import br.com.imsa.easyfood.domain.entity.UserSystem;
+import br.com.imsa.easyfood.domain.enums.KichenTypeEnum;
+import br.com.imsa.easyfood.domain.exception.NegocioException;
 import br.com.imsa.easyfood.domain.gateway.AddressGateway;
 import br.com.imsa.easyfood.domain.gateway.RestaurantGateway;
 import br.com.imsa.easyfood.domain.gateway.UserSystemGateway;
@@ -24,22 +27,41 @@ public class UpdateRestaurantUseCase {
         if (input == null || input.id() == null) return Optional.empty();
 
         Optional<Restaurant> opt = restaurantGateway.findById(input.id());
-        if (opt.isEmpty()) return Optional.empty();
-
-        Restaurant r = opt.get();
-        if (input.name() != null) r.setName(input.name());
-        if (input.kitchenType() != null) r.setKitchenType(input.kitchenType());
-        if (input.startOperationTime() != null) r.setStartOperationTime(input.startOperationTime());
-        if (input.endOperationTime() != null) r.setEndOperationTime(input.endOperationTime());
-
-        if (input.addressId() != null) {
-            addressGateway.findById(input.addressId()).ifPresent(r::setAddress);
-        }
-        if (input.proprietaryId() != null) {
-            userSystemGateway.findById(input.proprietaryId()).ifPresent(r::setProprietary);
+        if (opt.isEmpty()){
+            return Optional.empty();
         }
 
-        Restaurant saved = restaurantGateway.save(r);
+        Restaurant current = opt.get();
+
+        Address finalAddress = current.getAddress();
+        UpdateAddressInput addrInput = input.address();
+        if (addrInput != null) {
+
+            Address mergedAddr = new Address(
+                    addrInput.id(),
+                    addrInput.street(),
+                    addrInput.neighborhood(),
+                    addrInput.city(),
+                    addrInput.number(),
+                    addrInput.zipCode());
+
+            addressGateway.update(addrInput.id(), mergedAddr);
+        }
+
+        UserSystem proprietary = userSystemGateway.findById(input.proprietaryId())
+                .orElseThrow(() -> new NegocioException("Usuário não cadastrado no sistema"));
+
+        Restaurant merged = new Restaurant(
+                current.getId(),
+                input.name(),
+                finalAddress,
+                input.kitchenType(),
+                input.startOperationTime(),
+                input.endOperationTime(),
+                proprietary
+        );
+
+        Restaurant saved = restaurantGateway.save(merged);
         return Optional.ofNullable(saved);
     }
 }

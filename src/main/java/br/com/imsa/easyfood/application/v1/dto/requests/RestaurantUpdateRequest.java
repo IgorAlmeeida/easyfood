@@ -1,6 +1,8 @@
 package br.com.imsa.easyfood.application.v1.dto.requests;
 
+import br.com.imsa.easyfood.domain.enums.KichenTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,9 +19,11 @@ public class RestaurantUpdateRequest {
 
     private String name;
 
-    private Long addressId;
+    @Schema(description = "Address Restaurant")
+    @NotNull(message = "{validation.user.address.required}")
+    private AddressRequest address;
 
-    private String kitchenType;
+    private KichenTypeEnum kitchenType;
 
     private LocalDateTime startOperationTime;
 

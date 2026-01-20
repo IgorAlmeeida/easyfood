@@ -1,17 +1,15 @@
 package br.com.imsa.easyfood.infra.config.jwt;
 
-import br.com.imsa.easyfood.exception.ErrorResponse;
+import br.com.imsa.easyfood.infra.exception.ErrorResponse;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.MediaType;

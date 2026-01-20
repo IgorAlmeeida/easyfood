@@ -13,10 +13,13 @@ import br.com.imsa.easyfood.domain.usercase.restauranteitem.CreateRestaurantItem
 import br.com.imsa.easyfood.domain.usercase.restauranteitem.DeleteRestaurantItemUseCase;
 import br.com.imsa.easyfood.domain.usercase.restauranteitem.SearchRestaurantItemUseCase;
 import br.com.imsa.easyfood.domain.usercase.restauranteitem.UpdateRestaurantItemUseCase;
-import br.com.imsa.easyfood.exception.ErrorResponse;
+import br.com.imsa.easyfood.infra.adpter.RestaurantEntityRespository;
+import br.com.imsa.easyfood.infra.exception.ErrorResponse;
 import br.com.imsa.easyfood.infra.adpter.RestaurantItemEntityRepository;
 import br.com.imsa.easyfood.infra.mappers.RestaurantItemMapper;
+import br.com.imsa.easyfood.infra.mappers.RestaurantMapper;
 import br.com.imsa.easyfood.infra.repository.RestaurantItemRepository;
+import br.com.imsa.easyfood.infra.repository.RestaurantRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -45,8 +48,15 @@ public class RestaurantItemController {
     private final RestaurantItemMapper restaurantItemMapper; // infra mapper for gateways
     private final RestaurantItemMapperApp restaurantItemMapperApp; // app-level mapper for API
 
+    private final RestaurantRepository restaurantRepository;
+    private final RestaurantMapper  restaurantMapper;
+
     private RestaurantItemEntityRepository restaurantItemGateway() {
         return new RestaurantItemEntityRepository(restaurantItemRepository, restaurantItemMapper);
+    }
+
+    private RestaurantEntityRespository  restaurantGateway() {
+        return new RestaurantEntityRespository(restaurantRepository, restaurantMapper);
     }
 
     @PostMapping
@@ -60,9 +70,13 @@ public class RestaurantItemController {
         CreateRestaurantItemInput input = new CreateRestaurantItemInput(
                 req.getDescription(),
                 req.getPrice(),
-                req.getImage()
+                req.getImage(),
+                req.getAvailability(),
+                req.getRestaurantId()
+
         );
-        CreateRestaurantItemUseCase useCase = new CreateRestaurantItemUseCase(restaurantItemGateway());
+
+        CreateRestaurantItemUseCase useCase = new CreateRestaurantItemUseCase(restaurantItemGateway(), restaurantGateway());
         return useCase.execute(input)
                 .map(restaurantItemMapperApp::toRestaurantItemResponse)
                 .map(resp -> new ResponseEntity<>(resp, HttpStatus.CREATED))
@@ -110,9 +124,12 @@ public class RestaurantItemController {
                 id,
                 req.getDescription(),
                 req.getPrice(),
-                req.getImage()
+                req.getImage(),
+                req.getAvailability(),
+                req.getRestaurantId()
         );
-        UpdateRestaurantItemUseCase useCase = new UpdateRestaurantItemUseCase(restaurantItemGateway());
+
+        UpdateRestaurantItemUseCase useCase = new UpdateRestaurantItemUseCase(restaurantItemGateway(), restaurantGateway());
         return useCase.execute(input)
                 .map(restaurantItemMapperApp::toRestaurantItemResponse)
                 .map(resp -> new ResponseEntity<>(resp, HttpStatus.OK))

@@ -1,4 +1,4 @@
-package br.com.imsa.easyfood.exception;
+package br.com.imsa.easyfood.domain.exception;
 
 public class NegocioException extends RuntimeException {
     public NegocioException(String message) {

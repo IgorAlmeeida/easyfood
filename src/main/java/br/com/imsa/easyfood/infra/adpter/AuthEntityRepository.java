@@ -1,7 +1,7 @@
 package br.com.imsa.easyfood.infra.adpter;
 
 import br.com.imsa.easyfood.domain.gateway.AuthGateway;
-import br.com.imsa.easyfood.exception.NegocioException;
+import br.com.imsa.easyfood.domain.exception.NegocioException;
 import br.com.imsa.easyfood.infra.provider.TokenProvider;
 import br.com.imsa.easyfood.infra.repository.UserSystemRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,9 +11,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor

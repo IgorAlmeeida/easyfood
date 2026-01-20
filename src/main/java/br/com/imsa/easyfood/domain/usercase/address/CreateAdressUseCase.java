@@ -15,12 +15,13 @@ public class CreateAdressUseCase {
 
     @Transactional
     public void execute(CreateAddressInput createAddressInput) {
-        Address address = new Address();
-        address.setStreet(createAddressInput.street());
-        address.setNeighborhood(createAddressInput.neighborhood());
-        address.setCity(createAddressInput.city());
-        address.setNumber(createAddressInput.number());
-        address.setZipCode(createAddressInput.number());
+        Address address = new Address(
+                createAddressInput.street(),
+                createAddressInput.neighborhood(),
+                createAddressInput.city(),
+                createAddressInput.number(),
+                createAddressInput.zipCode()
+        );
         addressGateway.save(address);
     }
 

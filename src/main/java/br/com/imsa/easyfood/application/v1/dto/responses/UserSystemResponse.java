@@ -1,6 +1,6 @@
 package br.com.imsa.easyfood.application.v1.dto.responses;
 
-import br.com.imsa.easyfood.infra.enums.UserTypeEnum;
+import br.com.imsa.easyfood.domain.enums.UserTypeEnum;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -32,8 +32,8 @@ public class UserSystemResponse {
     @Schema(description = "User address")
     private AddressResponse address;
 
-    @Schema(description = "User type acronym", example = "CLIENT")
-    private UserTypeEnum userType;
+    @Schema(description = "User type acronym")
+    private UserTypeResponse userType;
 
     @Schema(description = "Creation Date", example = "2025-11-02T22:26:10")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")

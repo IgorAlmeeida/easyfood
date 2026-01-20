@@ -14,17 +14,21 @@ import br.com.imsa.easyfood.domain.dto.input.usersystem.CreateUserSystemInput;
 import br.com.imsa.easyfood.domain.dto.input.usersystem.UpdateUserSystemInput;
 import br.com.imsa.easyfood.domain.dto.output.usersystem.CreateUserSystemOutput;
 import br.com.imsa.easyfood.domain.entity.UserSystem;
+import br.com.imsa.easyfood.domain.gateway.UserTypeGateway;
 import br.com.imsa.easyfood.domain.usercase.usersystem.CreateUserSystemUseCase;
 import br.com.imsa.easyfood.domain.usercase.usersystem.DeleteUserSystemUseCase;
 import br.com.imsa.easyfood.domain.usercase.usersystem.SearchUserSystemUseCase;
 import br.com.imsa.easyfood.domain.usercase.usersystem.UpdateUserSystemUseCase;
-import br.com.imsa.easyfood.exception.ErrorResponse;
+import br.com.imsa.easyfood.infra.adpter.UserTypeEntityRepository;
+import br.com.imsa.easyfood.infra.exception.ErrorResponse;
 import br.com.imsa.easyfood.infra.adpter.AddressEntityRepository;
 import br.com.imsa.easyfood.infra.adpter.UserSystemEntityRepository;
 import br.com.imsa.easyfood.infra.mappers.UserSystemMapper;
 import br.com.imsa.easyfood.infra.mappers.AddressMapper;
+import br.com.imsa.easyfood.infra.mappers.UserTypeMapper;
 import br.com.imsa.easyfood.infra.repository.AddressRepository;
 import br.com.imsa.easyfood.infra.repository.UserSystemRepository;
+import br.com.imsa.easyfood.infra.repository.UserTypeRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -41,6 +45,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,14 +60,21 @@ public class UserSystemController {
     private final UserSystemMapper userSystemMapper; // infra mapper for gateways
     private final AddressMapper addressMapper;       // infra mapper for gateways
     private final UserSystemMapperApp userSystemMapperApp; // app-level mapper for API
-    private final AddressMapperApp addressMapperApp;        // app-level mapper for API
+    private final PasswordEncoder encoder;        // app-level mapper for API
+
+    private final UserTypeMapper userTypeMapper;
+    private final UserTypeRepository userTypeRepository;
 
     private UserSystemEntityRepository userSystemGateway() {
-        return new UserSystemEntityRepository(userSystemRepository, userSystemMapper);
+        return new UserSystemEntityRepository(userSystemRepository, userSystemMapper, encoder);
     }
 
     private AddressEntityRepository addressGateway() {
         return new AddressEntityRepository(addressRepository, addressMapper);
+    }
+
+    private UserTypeEntityRepository userTypeGateway() {
+        return new UserTypeEntityRepository(userTypeRepository, userTypeMapper);
     }
 
     @PostMapping
@@ -81,7 +93,7 @@ public class UserSystemController {
                 toCreateAddressInput(req.getAddress()),
                 req.getPassword()
         );
-        CreateUserSystemUseCase useCase = new CreateUserSystemUseCase(userSystemGateway(), addressGateway());
+        CreateUserSystemUseCase useCase = new CreateUserSystemUseCase(userSystemGateway(), addressGateway(), userTypeGateway());
 
         CreateUserSystemOutput output = useCase.execute(input);
         UserSystemResponse response = userSystemMapperApp.toUserSystemResponse(output);
@@ -135,7 +147,7 @@ public class UserSystemController {
                 null,
                 toUpdateAddressInput(req.getAddress())
         );
-        UpdateUserSystemUseCase useCase = new UpdateUserSystemUseCase(userSystemGateway(), addressGateway());
+        UpdateUserSystemUseCase useCase = new UpdateUserSystemUseCase(userSystemGateway(), addressGateway(), userTypeGateway());
         return useCase.execute(input)
                 .map(userSystemMapperApp::toUserSystemResponse)
                 .map(resp -> new ResponseEntity<>(resp, HttpStatus.OK))

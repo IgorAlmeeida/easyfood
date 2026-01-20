@@ -17,8 +17,7 @@ public class CreateUserTypeUseCase {
 
     public Optional<CreateUserTypeOutput> execute(CreateUserTypeInput input) {
         if (input == null) return Optional.empty();
-        UserType t = new UserType();
-        t.setName(input.name());
+        UserType t = new UserType(input.name());
         UserType saved = userTypeGateway.save(t);
         if (saved == null) return Optional.empty();
         return Optional.of(new CreateUserTypeOutput(saved.getId(), saved.getName()));

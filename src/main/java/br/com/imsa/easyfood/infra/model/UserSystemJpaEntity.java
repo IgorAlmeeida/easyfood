@@ -1,6 +1,7 @@
 package br.com.imsa.easyfood.infra.model;
 
-import br.com.imsa.easyfood.infra.enums.UserTypeEnum;
+import br.com.imsa.easyfood.domain.entity.UserType;
+import br.com.imsa.easyfood.domain.enums.UserTypeEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -46,8 +47,9 @@ public class UserSystemJpaEntity extends Auditable implements UserDetails {
     @Column(name = "active", nullable = false)
     private boolean active;
 
-    @Column(name = "user_type", nullable = false)
-    private UserTypeEnum userType;
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_type_id")
+    private UserTypeJpaEntity userType;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")

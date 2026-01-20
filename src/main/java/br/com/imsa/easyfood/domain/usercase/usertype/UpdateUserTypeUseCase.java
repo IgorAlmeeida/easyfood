@@ -18,9 +18,10 @@ public class UpdateUserTypeUseCase {
         if (input == null || input.id() == null) return Optional.empty();
         Optional<UserType> opt = userTypeGateway.findById(input.id());
         if (opt.isEmpty()) return Optional.empty();
-        UserType t = opt.get();
-        if (input.name() != null) t.setName(input.name());
-        UserType saved = userTypeGateway.save(t);
+        UserType current = opt.get();
+        String name = input.name() != null ? input.name() : current.getName();
+        UserType merged = new UserType(current.getId(), name);
+        UserType saved = userTypeGateway.save(merged);
         return Optional.ofNullable(saved);
     }
 }

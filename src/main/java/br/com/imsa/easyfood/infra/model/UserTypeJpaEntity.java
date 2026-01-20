@@ -8,6 +8,8 @@ import lombok.Setter;
 import org.hibernate.envers.AuditTable;
 import org.hibernate.envers.Audited;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -25,4 +27,9 @@ public class UserTypeJpaEntity {
 
     @Column(name = "name")
     private String name;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "userType")
+    private List<UserSystemJpaEntity> users;
+
+
 }
