@@ -25,7 +25,7 @@ spring:
     # Default datasource values; will be overridden in 'dev' profile below
     url: jdbc:postgresql://localhost:5432/dbeasyfood
     username: easyfood
-    password: easyfood
+    password:
     
     hikari:
       minimum-idle: 1 #minimum number of idle connections maintained by HikariCP in a connection pool

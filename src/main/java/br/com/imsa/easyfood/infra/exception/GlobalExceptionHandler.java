@@ -279,7 +279,7 @@ public class GlobalExceptionHandler {
         Map<String, String> fieldErrors = new HashMap<>();
 
         Throwable root = NestedExceptionUtils.getMostSpecificCause(ex);
-        if (root == null) {
+        if (root.getMessage() == null || root.getMessage().isBlank()) {
             return fieldErrors;
         }
 
