@@ -3,11 +3,15 @@ package br.com.imsa.easyfood.application.v1.controllers;
 import br.com.imsa.easyfood.application.v1.dto.requests.ChangePasswordRequest;
 import br.com.imsa.easyfood.application.v1.dto.requests.LoginRequest;
 import br.com.imsa.easyfood.application.v1.dto.responses.LoginResponse;
-import br.com.imsa.easyfood.infra.model.UserSystemJpaEntity;
-import br.com.imsa.easyfood.infra.provider.TokenProvider;
-import br.com.imsa.easyfood.domain.service.UserSystemPasswordService;
-import br.com.imsa.easyfood.exception.NegocioException;
+import br.com.imsa.easyfood.domain.dto.output.auth.LoginOutput;
+import br.com.imsa.easyfood.domain.usercase.auth.ChangePasswordUserCase;
+import br.com.imsa.easyfood.domain.usercase.auth.LoginUserCase;
 import br.com.imsa.easyfood.exception.ErrorResponse;
+import br.com.imsa.easyfood.infra.adpter.AuthEntityRepository;
+import br.com.imsa.easyfood.infra.adpter.UserSystemEntityRepository;
+import br.com.imsa.easyfood.infra.mappers.UserSystemMapper;
+import br.com.imsa.easyfood.infra.provider.TokenProvider;
+import br.com.imsa.easyfood.infra.repository.UserSystemRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,14 +22,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping(value = "/api/auth/v1", produces = "application/json; charset=utf-8")
@@ -34,12 +36,19 @@ import org.springframework.security.core.Authentication;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
-    private final UserSystemPasswordService userSystemPasswordService;
-    private final TokenProvider tokenProvider;
     private final MessageSource messageSource;
+    private final TokenProvider tokenProvider;
+    private final UserSystemRepository userSystemRepository;
+    private final UserSystemMapper userSystemMapper;
 
-    @Value("${app.jwtExpirationMs}")
-    private int jwtExpirationMs;
+
+    private AuthEntityRepository authGateway() {
+        return new AuthEntityRepository(authenticationManager, tokenProvider, messageSource, userSystemRepository);
+    }
+
+    private UserSystemEntityRepository userSystemGateway() {
+        return new UserSystemEntityRepository(userSystemRepository, userSystemMapper);
+    }
 
     @PostMapping("/login")
     @Operation(summary = "Authenticate user", description = "Authenticates a user and returns a JWT token.")
@@ -50,24 +59,14 @@ public class AuthController {
             @ApiResponse(responseCode = "500", description = "Server error", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<LoginResponse> loginUserSystem(@Valid @RequestBody LoginRequest loginRequest) {
-        Authentication authentication;
-        try {
-            authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
-            );
-        } catch (Exception e) {
-            throw new NegocioException(messageSource.getMessage("auth.credentials.bad", null, LocaleContextHolder.getLocale()));
-        }
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        UserSystemJpaEntity userSystemJpaEntity = (UserSystemJpaEntity) authentication.getPrincipal();
-
+        LoginUserCase useCase = new LoginUserCase(authGateway());
+        LoginOutput output = useCase.execute(loginRequest.getUsername(), loginRequest.getPassword());
         return ResponseEntity.ok(new LoginResponse(
-                tokenProvider.generate(authentication),
-                "Bearer",
-                userSystemJpaEntity.getUsername(),
-                jwtExpirationMs));
+                output.token(),
+                output.type(),
+                output.username(),
+                output.tokenExpiryDuration()
+        ));
     }
 
     @PostMapping("/change-password")
@@ -79,8 +78,14 @@ public class AuthController {
     })
     public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserSystemJpaEntity userSystemJpaEntity = (UserSystemJpaEntity) authentication.getPrincipal();
-        this.userSystemPasswordService.changePassword(userSystemJpaEntity.getId(), changePasswordRequest.getOldPassword(), changePasswordRequest.getNewPassword());
+        String username = (authentication != null) ? authentication.getName() : null;
+        if (username == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        ChangePasswordUserCase useCase = new ChangePasswordUserCase(userSystemGateway());
+        userSystemGateway().findByUsername(username).ifPresent(user ->
+                useCase.execute(user.getId(), changePasswordRequest.getOldPassword(), changePasswordRequest.getNewPassword())
+        );
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

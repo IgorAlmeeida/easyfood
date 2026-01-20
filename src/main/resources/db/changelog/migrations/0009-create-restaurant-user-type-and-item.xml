@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        logicalFilePath="db/changelog/0009-create-restaurant-user-type-and-item.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="0009-create-restaurant-user-type-and-item" author="system">
+        <comment>Cria tabelas: easyfood.user_type, easyfood.restaurant, easyfood.restaurant_item</comment>
+
+        <!-- user_type -->
+        <createTable tableName="user_type" schemaName="easyfood">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dh_create_at" type="TIMESTAMP"/>
+            <column name="dh_update_at" type="TIMESTAMP"/>
+        </createTable>
+
+        <!-- restaurant -->
+        <createTable tableName="restaurant" schemaName="easyfood">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="address_id" type="BIGINT"/>
+            <column name="kitchen_type" type="VARCHAR(255)"/>
+            <column name="start_operation_time" type="TIMESTAMP"/>
+            <column name="end_operation_time" type="TIMESTAMP"/>
+            <column name="proprietary_id" type="BIGINT"/>
+            <column name="dh_create_at" type="TIMESTAMP"/>
+            <column name="dh_update_at" type="TIMESTAMP"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableSchemaName="easyfood" baseTableName="restaurant" baseColumnNames="address_id"
+                                 referencedTableSchemaName="easyfood" referencedTableName="address" referencedColumnNames="id"
+                                 constraintName="fk_restaurant_address"/>
+        <addForeignKeyConstraint baseTableSchemaName="easyfood" baseTableName="restaurant" baseColumnNames="proprietary_id"
+                                 referencedTableSchemaName="easyfood" referencedTableName="user_system" referencedColumnNames="id"
+                                 constraintName="fk_restaurant_proprietary"/>
+
+        <!-- restaurant_item -->
+        <createTable tableName="restaurant_item" schemaName="easyfood">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="image_location" type="VARCHAR(512)"/>
+            <column name="dh_create_at" type="TIMESTAMP"/>
+            <column name="dh_update_at" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

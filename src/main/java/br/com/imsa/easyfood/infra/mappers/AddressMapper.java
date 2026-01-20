@@ -10,6 +10,8 @@ public interface AddressMapper {
 
     AddressJpaEntity toEntity(Address address);
 
+    Address toDomain(AddressJpaEntity entity);
+
     void update(@MappingTarget AddressJpaEntity target, Address request);
 
 }

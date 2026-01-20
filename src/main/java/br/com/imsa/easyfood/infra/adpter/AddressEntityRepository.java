@@ -7,23 +7,31 @@ import br.com.imsa.easyfood.infra.model.AddressJpaEntity;
 import br.com.imsa.easyfood.infra.repository.AddressRepository;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 public class AddressEntityRepository implements AddressGateway {
 
     private final AddressRepository repository;
     private final AddressMapper mapper;
 
+    @Override
+    public Optional<Address> findById(Long id) {
+        return repository.findById(id).map(mapper::toDomain);
+    }
 
     @Override
     public Address save(Address address) {
         AddressJpaEntity jpaEntity = mapper.toEntity(address);
-        return repository.save(jpaEntity);
+        AddressJpaEntity saved = repository.save(jpaEntity);
+        return mapper.toDomain(saved);
     }
 
     @Override
     public Address update(Long id, Address address) {
         AddressJpaEntity jpaEntity = mapper.toEntity(address);
         jpaEntity.setId(id);
-        return repository.save(jpaEntity);
+        AddressJpaEntity saved = repository.save(jpaEntity);
+        return mapper.toDomain(saved);
     }
 }

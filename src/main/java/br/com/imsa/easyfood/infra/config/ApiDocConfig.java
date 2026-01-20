@@ -59,7 +59,7 @@ public class ApiDocConfig {
     public GroupedOpenApi api1() {
         return GroupedOpenApi.builder()
                 .group("v1")
-                .packagesToScan("br.com.imsa.easyfood.api.controller.v1")
+                .packagesToScan("br.com.imsa.easyfood.application.v1")
                 .build();
     }
 

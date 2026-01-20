@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        logicalFilePath="db/changelog/0010-create-audit-restaurant-user-type-item.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="0010-create-audit-restaurant-user-type-item" author="system">
+        <comment>Cria tabelas de auditoria para user_type, restaurant e restaurant_item (compatíveis com Hibernate Envers)</comment>
+
+        <!-- user_type_audit -->
+        <createTable tableName="user_type_audit" schemaName="audit_easyfood">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="dh_create_at" type="TIMESTAMP"/>
+            <column name="dh_update_at" type="TIMESTAMP"/>
+        </createTable>
+        <addPrimaryKey schemaName="audit_easyfood" tableName="user_type_audit" columnNames="id, rev" constraintName="pk_user_type_audit"/>
+        <addForeignKeyConstraint baseTableSchemaName="audit_easyfood" baseTableName="user_type_audit" baseColumnNames="rev"
+                                 referencedTableSchemaName="audit_easyfood" referencedTableName="revision_entity" referencedColumnNames="id"
+                                 constraintName="fk_user_type_audit_rev"/>
+
+        <!-- restaurant_audit -->
+        <createTable tableName="restaurant_audit" schemaName="audit_easyfood">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="address_id" type="BIGINT"/>
+            <column name="kitchen_type" type="VARCHAR(255)"/>
+            <column name="start_operation_time" type="TIMESTAMP"/>
+            <column name="end_operation_time" type="TIMESTAMP"/>
+            <column name="proprietary_id" type="BIGINT"/>
+            <column name="dh_create_at" type="TIMESTAMP"/>
+            <column name="dh_update_at" type="TIMESTAMP"/>
+        </createTable>
+        <addPrimaryKey schemaName="audit_easyfood" tableName="restaurant_audit" columnNames="id, rev" constraintName="pk_restaurant_audit"/>
+        <addForeignKeyConstraint baseTableSchemaName="audit_easyfood" baseTableName="restaurant_audit" baseColumnNames="rev"
+                                 referencedTableSchemaName="audit_easyfood" referencedTableName="revision_entity" referencedColumnNames="id"
+                                 constraintName="fk_restaurant_audit_rev"/>
+
+        <!-- restaurant_item_audit -->
+        <createTable tableName="restaurant_item_audit" schemaName="audit_easyfood">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rev" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="revtype" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="price" type="DECIMAL(10,2)"/>
+            <column name="image_location" type="VARCHAR(512)"/>
+            <column name="dh_create_at" type="TIMESTAMP"/>
+            <column name="dh_update_at" type="TIMESTAMP"/>
+        </createTable>
+        <addPrimaryKey schemaName="audit_easyfood" tableName="restaurant_item_audit" columnNames="id, rev" constraintName="pk_restaurant_item_audit"/>
+        <addForeignKeyConstraint baseTableSchemaName="audit_easyfood" baseTableName="restaurant_item_audit" baseColumnNames="rev"
+                                 referencedTableSchemaName="audit_easyfood" referencedTableName="revision_entity" referencedColumnNames="id"
+                                 constraintName="fk_restaurant_item_audit_rev"/>
+    </changeSet>
+
+</databaseChangeLog>

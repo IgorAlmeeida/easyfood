@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        logicalFilePath="db/changelog/0011-alter-address-audit-ensure-columns.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="0011-address-audit-ensure-columns" author="system">
+        <comment>Adiciona (se não existirem) as colunas de Address em audit_easyfood.address_audit</comment>
+        <sql>ALTER TABLE IF EXISTS audit_easyfood.address_audit ADD COLUMN IF NOT EXISTS street VARCHAR(255);</sql>
+        <sql>ALTER TABLE IF EXISTS audit_easyfood.address_audit ADD COLUMN IF NOT EXISTS neighborhood VARCHAR(255);</sql>
+        <sql>ALTER TABLE IF EXISTS audit_easyfood.address_audit ADD COLUMN IF NOT EXISTS city VARCHAR(255);</sql>
+        <sql>ALTER TABLE IF EXISTS audit_easyfood.address_audit ADD COLUMN IF NOT EXISTS number VARCHAR(50);</sql>
+        <sql>ALTER TABLE IF EXISTS audit_easyfood.address_audit ADD COLUMN IF NOT EXISTS zip_code VARCHAR(20);</sql>
+        <sql>ALTER TABLE IF EXISTS audit_easyfood.address_audit ADD COLUMN IF NOT EXISTS dh_create_at TIMESTAMP;</sql>
+        <sql>ALTER TABLE IF EXISTS audit_easyfood.address_audit ADD COLUMN IF NOT EXISTS dh_update_at TIMESTAMP;</sql>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,32 +1,39 @@
 package br.com.imsa.easyfood.infra.mappers;
 
-import br.com.imsa.easyfood.application.v1.dto.requests.UserSystemCreateRequest;
-import br.com.imsa.easyfood.application.v1.dto.requests.UserSystemUpdateRequest;
-import br.com.imsa.easyfood.application.v1.dto.responses.UserSystemResponse;
+import br.com.imsa.easyfood.domain.entity.UserSystem;
 import br.com.imsa.easyfood.infra.model.UserSystemJpaEntity;
-import org.mapstruct.BeanMapping;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Mapper(componentModel = "spring", uses = {AddressMapper.class})
-public interface UserSystemMapper {
+public abstract class UserSystemMapper {
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "active", ignore = true)
-    @Mapping(target = "password", source = "password")
-    @Mapping(target = "address", ignore = true) // handled outside or via AddressService
-    UserSystemJpaEntity toEntity(UserSystemCreateRequest request);
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "password", ignore = true)
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "active", ignore = true)
-    @Mapping(target = "address", ignore = true) // Address handled by AddressService
-    void update(@MappingTarget UserSystemJpaEntity target, UserSystemUpdateRequest source);
+    @Mapping(source = "address", target = "addressJpaEntity")
+    public abstract UserSystemJpaEntity toEntity(UserSystem domain);
 
-    @Mapping(target = "createAt", source = "createAt")
-    @Mapping(target = "updateAt", source = "updateAt")
-    UserSystemResponse toResponse(UserSystemJpaEntity entity);
+    @Mapping(source = "addressJpaEntity", target = "address")
+    public abstract UserSystem toDomain(UserSystemJpaEntity entity);
+
+    @AfterMapping
+    protected void encodePassword(UserSystem domain, @MappingTarget UserSystemJpaEntity entity) {
+        if (domain == null) return;
+        String pwd = domain.getPassword();
+        if (pwd == null || pwd.isBlank()) return;
+        if (isBCryptHash(pwd)) {
+            entity.setPassword(pwd);
+        } else if (passwordEncoder != null) {
+            entity.setPassword(passwordEncoder.encode(pwd));
+        }
+    }
+
+    private boolean isBCryptHash(String pwd) {
+        return pwd.startsWith("$2a$") || pwd.startsWith("$2b$") || pwd.startsWith("$2y$");
+    }
 }
