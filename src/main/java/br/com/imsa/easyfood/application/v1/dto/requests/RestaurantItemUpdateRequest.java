@@ -14,13 +14,18 @@ import lombok.Setter;
 @Schema(name = "RestaurantItemUpdateRequest", description = "Request payload to update a restaurant item")
 public class RestaurantItemUpdateRequest {
 
+    @Schema(description = "Item description", example = "Veggie Pizza")
     private String description;
 
+    @Schema(description = "Item price", example = "49.90")
     private Double price;
 
+    @Schema(description = "URL or path of the item image", example = "https://cdn.example.com/img/veggie-pizza.png")
     private String image;
 
+    @Schema(description = "Availability status of the item", example = "UNAVAILABLE")
     private AvailabilityEnum availability;
 
+    @Schema(description = "Associated restaurant identifier", example = "2")
     private Long restaurantId;
 }

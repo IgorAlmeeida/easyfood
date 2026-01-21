@@ -17,17 +17,22 @@ import java.time.LocalDateTime;
 @Schema(name = "RestaurantUpdateRequest", description = "Request payload to update a restaurant")
 public class RestaurantUpdateRequest {
 
+    @Schema(description = "Restaurant name", example = "Sabor & Arte")
     private String name;
 
-    @Schema(description = "Address Restaurant")
+    @Schema(description = "Restaurant address")
     @NotNull(message = "{validation.user.address.required}")
     private AddressRequest address;
 
+    @Schema(description = "Kitchen type", example = "ITALIAN")
     private KichenTypeEnum kitchenType;
 
+    @Schema(description = "Start time of operation (HH:mm)", example = "10:00")
     private LocalDateTime startOperationTime;
 
+    @Schema(description = "End time of operation (HH:mm)", example = "22:00")
     private LocalDateTime endOperationTime;
 
+    @Schema(description = "UserSystem (proprietary) identifier", example = "1")
     private Long proprietaryId;
 }

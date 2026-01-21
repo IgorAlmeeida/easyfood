@@ -14,6 +14,7 @@ import lombok.Setter;
 @Schema(name = "UserTypeCreateRequest", description = "Request payload to create a user type")
 public class UserTypeCreateRequest {
 
+    @Schema(description = "User type name", example = "ADMIN")
     @NotBlank
     private String name;
 }

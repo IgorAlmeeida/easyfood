@@ -18,19 +18,23 @@ import java.time.LocalDateTime;
 @Schema(name = "RestaurantCreateRequest", description = "Request payload to create a restaurant")
 public class RestaurantCreateRequest {
 
+    @Schema(description = "Restaurant name", example = "Sabor & Arte")
     @NotBlank
     private String name;
 
-    @Schema(description = "Address Restaurant")
+    @Schema(description = "Restaurant address")
     @NotNull(message = "{validation.user.address.required}")
     private AddressRequest address;
 
+    @Schema(description = "Kitchen type", example = "BRAZILIAN")
     @NotNull
     private KichenTypeEnum kitchenType;
 
+    @Schema(description = "Start time of operation (HH:mm)", example = "09:00")
     @NotNull
     private LocalDateTime startOperationTime;
 
+    @Schema(description = "End time of operation (HH:mm)", example = "18:00")
     @NotNull
     private LocalDateTime endOperationTime;
 

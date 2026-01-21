@@ -12,5 +12,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @Schema(name = "UserTypeUpdateRequest", description = "Request payload to update a user type")
 public class UserTypeUpdateRequest {
+    @Schema(description = "User type name", example = "CUSTOMER")
     private String name;
 }

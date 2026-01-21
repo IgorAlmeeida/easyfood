@@ -16,15 +16,20 @@ import lombok.Setter;
 @Schema(name = "RestaurantItemCreateRequest", description = "Request payload to create a restaurant item")
 public class RestaurantItemCreateRequest {
 
+    @Schema(description = "Item description", example = "Cheeseburger")
     @NotBlank
     private String description;
 
+    @Schema(description = "Item price", example = "29.90")
     @NotNull
     private Double price;
 
+    @Schema(description = "URL or path of the item image", example = "https://cdn.example.com/img/cheeseburger.png")
     private String image;
 
+    @Schema(description = "Availability status of the item", example = "AVAILABLE")
     private AvailabilityEnum availability;
 
+    @Schema(description = "Associated restaurant identifier", example = "1")
     private Long restaurantId;
 }

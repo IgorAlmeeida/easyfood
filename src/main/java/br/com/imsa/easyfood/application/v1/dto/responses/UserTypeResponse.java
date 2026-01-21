@@ -12,6 +12,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Schema(name = "UserTypeResponse", description = "User type API response")
 public class UserTypeResponse {
+    @Schema(description = "User type identifier", example = "3")
     private Long id;
+    @Schema(description = "User type name", example = "ADMIN")
     private String name;
 }
