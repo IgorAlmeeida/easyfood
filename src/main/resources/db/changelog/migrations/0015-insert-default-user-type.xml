@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        logicalFilePath="db/changelog/0015-insert-default-user-type.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="0015-insert-default-user-type" author="system">
+        <comment>Insere tipo de usuário padrão com id 0 e nome ADMIN</comment>
+
+        <!-- Insere somente se ainda não existir -->
+        <sql>INSERT INTO easyfood.user_type(id, name)
+            SELECT 0, 'ADMIN'
+            WHERE NOT EXISTS (SELECT 1 FROM easyfood.user_type WHERE id = 0);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
